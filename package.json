@@ -15,11 +15,12 @@
   ],
   "main": "./src/index.js",
   "repository": "https://github.com/MTTTM/vue-horizontal-screen",
-  "description":"It provides horizontal web page layout and events",
+  "description": "It provides horizontal web page layout and events",
   "dependencies": {
     "core-js": "^3.6.5",
     "node-sass": "^4.14.1",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-horizontal-screen": "^0.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
