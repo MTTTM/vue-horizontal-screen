@@ -1,6 +1,6 @@
 {
   "name": "vue-horizontal-screen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "private": false,
   "scripts": {
@@ -12,6 +12,13 @@
     "src/index.js",
     "./README.md",
     "./babel.config.js"
+  ],
+  "keywords": [
+    "vue",
+    "vue-horizontal-screen",
+    "horizontal",
+    "screen",
+    "horizontal-screen"
   ],
   "main": "./src/index.js",
   "repository": "https://github.com/MTTTM/vue-horizontal-screen",
