@@ -12,6 +12,9 @@
     "./README.md",
     "./babel.config.js"
   ],
+  "main": "./src/index.js",
+  "repository": "https://github.com/MTTTM/vue-horizontal-screen",
+  "description":"It provides horizontal web page layout and events",
   "dependencies": {
     "core-js": "^3.6.5",
     "node-sass": "^4.14.1",
