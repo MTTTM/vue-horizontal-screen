@@ -25,7 +25,8 @@ export const directive = {
     bind: function (el, binding) {
         
         let { cssVar, width, height, times, disabledresized } = binding.value;
-
+        let oneTimesWidth = width / times;
+        let oneTimesHeight = height / times;
         if (!cssVar) {
             cssVar = "hs-var";
         }
@@ -36,17 +37,17 @@ export const directive = {
             let clientWidth = document.documentElement.clientWidth;
             let clientHeight = document.documentElement.clientHeight;
             let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
-            let percent = maxWidth / (width / times);
+            let percent = maxWidth / oneTimesWidth;
             let isPc = !isMobile();
             //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
             if (getDir() == 1 || isPc) {
-                if (percent * height > clientHeight) {
-                    percent = clientHeight / (height / times);
+                if (percent * oneTimesHeight > clientHeight) {
+                    percent = clientHeight / oneTimesHeight;
                 }
             }
             else {
-                if (percent * height > clientWidth) {
-                    percent = clientWidth / (height / times);
+                if (percent * oneTimesHeight > clientWidth) {
+                    percent = clientWidth / oneTimesHeight;
                 }
             }
             document.querySelector('html').style.setProperty(`--${cssVar}`, percent);

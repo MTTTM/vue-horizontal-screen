@@ -75,7 +75,7 @@ body,
   display: flex;
   justify-content: center;
   align-items: center;
-  background: red;
+  background: #fff;
 }
 #wrap {
   width: px(667 * 3);
