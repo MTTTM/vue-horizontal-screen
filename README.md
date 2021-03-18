@@ -13,6 +13,7 @@ npm install vue-horizontal-screen
 | height  | Design draft height | --|TRUE|
 | cssVar  | css variable name | --hc-var |FALSE|
 | times  | Design draft multiple |--|TRUE|
+| disabledresized  | Disable response to trigger layout when window changes |FALSE|FALSE|
 
 ### params of event
 * params {obj} 
@@ -35,6 +36,11 @@ npm install vue-horizontal-screen
   background: green;
 }
 ```
+### trigger screen adaptation
+```javascript
+  this.$refs['hscreen'].$hsLayout();
+```
+
 ### Usage demo
 ### Design draft size  （667 * 3）*（375 * 3）;
 #### main.js
@@ -46,8 +52,8 @@ npm install vue-horizontal-screen
 #### vue template
 ```html
  <template>
-  <div id="app">
-    <div v-horizontal-screen="obj" class="box">
+  <div id="app" @click="reset">
+    <div v-horizontal-screen="obj" class="box" ref="hscreen">
       <div id="wrap">
         <div class="header">
           <div class="left">25</div>
@@ -90,6 +96,11 @@ export default {
       console.log("swipeBottom",obj.data.data)
     });
   },
+  methods: {
+    reset(){
+      this.$refs['hscreen'].$hsLayout();
+    }
+  }
 };
 ```
 #### scss

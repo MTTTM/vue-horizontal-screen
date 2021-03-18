@@ -1,13 +1,15 @@
 <template>
-  <div id="app">
-    <div v-horizontal-screen="obj" class="box">
+  <div id="app" @click="reset">
+    <div v-horizontal-screen="obj" class="box" ref="hscreen">
       <div id="wrap">
         <div class="header">
           <div class="left">25</div>
           <div class="mid">40</div>
-          <div class="right">50</div>
+          <div class="right" >50</div>
         </div>
-        <div class="main"></div>
+        <div class="main">
+          Click to trigger screen adaptation when your window size changes && page does not adapt
+        </div>
         <div class="footer"></div>
       </div>
     </div>
@@ -23,7 +25,8 @@ export default {
         width: 2001,
         height: 1125,
         cssVar: "hc-var",
-        times: 3
+        times: 3,
+        disabledresized:true//Disable response to trigger layout when window changes
       }
     };
   },
@@ -44,6 +47,11 @@ export default {
     //   console.log("swipeBottom",obj.data.data)
     //    alert("swipeBottom")
     // });
+  },
+  methods: {
+    reset(){
+      this.$refs['hscreen'].$hsLayout();
+    }
   },
 };
 </script>

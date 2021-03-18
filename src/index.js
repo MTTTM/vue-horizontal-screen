@@ -13,8 +13,9 @@ export const getDir = () => {
 }
 export const directive = {
     bind: function (el, binding) {
-        let eventName = "onorientationchange" in window ? "orientationchange" : "resize";
-        let { cssVar, width, times } = binding.value;
+        
+        let { cssVar, width, height, times, disabledresized } = binding.value;
+
         if (!cssVar) {
             cssVar = "hs-var";
         }
@@ -26,6 +27,17 @@ export const directive = {
             let clientHeight = document.documentElement.clientHeight;
             let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
             let percent = maxWidth / (width / times);
+            //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
+            if (getDir() == 1) {
+                if (percent * height > clientHeight) {
+                    percent = clientHeight / (height / times);
+                }
+            }
+            else {
+                if (percent * height > clientWidth) {
+                    percent = clientWidth / (height / times);
+                }
+            }
             //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
             if (window.orientation == null || window.orientation === 180 || window.orientation === 0) {//竖屏状态
                 el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
@@ -40,6 +52,7 @@ export const directive = {
             }
             document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
         }
+        el.$hsLayout = eventFunc;
         let timer;
         let eventFunTime = function () {
             clearTimeout(timer);
@@ -49,12 +62,20 @@ export const directive = {
         }
         el.fn = eventFunTime;
         el.fn();
-        window.removeEventListener(eventName, el.fn);
-        window.addEventListener(eventName, el.fn, false);
+        if ("onorientationchange" in window) {
+            window.removeEventListener('orientationchange', el.fn);
+            window.addEventListener('orientationchange', el.fn, false);
+        }
+        if (!disabledresized) {
+            window.removeEventListener('resize', el.fn);
+            window.addEventListener('resize', el.fn, false);
+        }
+
     },
     unbind(el) {
         window.removeEventListener('resize', el.fn, false);
         window.removeEventListener('orientationchange', el.fn, false);
+        el.$hsLayout = null;
     }
 }
 /**
@@ -63,8 +84,8 @@ export const directive = {
  * @description pre  事件前缀，默认为空
  * @description distance  事件距离，默认50
  */
-export const event = (obj={distance:50,pre:''}) => {
-    let {pre,distance}=obj;
+export const event = (obj = { distance: 50, pre: '' }) => {
+    let { pre, distance } = obj;
     //标记事件
     let swipeLeft = document.createEvent('HTMLEvents');
     swipeLeft.initEvent(`${pre}swipeLeft`, false, true);
@@ -87,17 +108,15 @@ export const event = (obj={distance:50,pre:''}) => {
         let startY = ev.targetTouches[0].pageY;
         let disX = 0;
         let disY = 0;
-        let disc=distance;
+        let disc = distance;
         function fnMove(ev) {
             let curX = ev.targetTouches[0].pageX;
             let curY = ev.targetTouches[0].pageY;
             disX = curX - startX;
             disY = curY - startY;
         }
-        // console.log("xxxx",pre,distance,disc)
         function fnEnd() {
             let dir = getDir();//1=>横屏 0=>竖屏
-           // console.log("xxxx",'disc',disc,'disY',disY,'disX',disX)
             if (dir == 1) {
                 //设备横屏
                 if (disY < 0 && disY < Number(-disc)) {
@@ -127,7 +146,7 @@ export const event = (obj={distance:50,pre:''}) => {
                     // alert("竖屏X右边")
                     dispatch(swipeRight, { dis: Math.abs(disY) });
                 }
-              //  console.log("disX < 0 && disX < Number(-disc)",Math.abs(disX),'++',disX,"??",disX < 0 && disX < Number(-disc))
+                //  console.log("disX < 0 && disX < Number(-disc)",Math.abs(disX),'++',disX,"??",disX < 0 && disX < Number(-disc))
                 if (disX < 0 && disX < Number(-disc)) {
                     //  alert("竖屏Y下滑")
                     dispatch(swipeBottom, { dis: Math.abs(disX) });
