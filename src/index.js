@@ -11,6 +11,16 @@ export const getDir = () => {
         return 0;
     }
 }
+export const isMobile = () => {
+    let ua = navigator.userAgent.toLowerCase();
+    let canTouch = "ontouchstart" in window && "ontouchstart" in document
+    if (/mobile/i.test(ua) || canTouch) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 export const directive = {
     bind: function (el, binding) {
         
@@ -27,8 +37,9 @@ export const directive = {
             let clientHeight = document.documentElement.clientHeight;
             let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
             let percent = maxWidth / (width / times);
+            let isPc = !isMobile();
             //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
-            if (getDir() == 1) {
+            if (getDir() == 1 || isPc) {
                 if (percent * height > clientHeight) {
                     percent = clientHeight / (height / times);
                 }
@@ -38,19 +49,28 @@ export const directive = {
                     percent = clientWidth / (height / times);
                 }
             }
-            //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
-            if (window.orientation == null || window.orientation === 180 || window.orientation === 0) {//竖屏状态
-                el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
-                el.style.width = `${clientHeight}px`;
-                el.style.height = `${clientWidth}px`;
-                el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
-                //如果已经处于横屏状态就不做其他处理了
-            } else if (window.orientation === 90 || window.orientation === -90) {//横屏状态
+            document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+            if (!isPc) {
+                //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
+                if (window.orientation == null || window.orientation === 180 || window.orientation === 0) {//竖屏状态
+                    el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
+                    el.style.width = `${clientHeight}px`;
+                    el.style.height = `${clientWidth}px`;
+                    el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
+                    //如果已经处于横屏状态就不做其他处理了
+                } else if (window.orientation === 90 || window.orientation === -90) {//横屏状态
+                    el.style.webkitTransform = el.style.transform = `rotate(0)`;
+                    el.style.width = `${clientWidth}px`;
+                    el.style.height = `${clientHeight}px`;
+                }
+            }
+            else {
                 el.style.webkitTransform = el.style.transform = `rotate(0)`;
                 el.style.width = `${clientWidth}px`;
                 el.style.height = `${clientHeight}px`;
             }
-            document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+
+
         }
         el.$hsLayout = eventFunc;
         let timer;
@@ -86,6 +106,11 @@ export const directive = {
  */
 export const event = (obj = { distance: 50, pre: '' }) => {
     let { pre, distance } = obj;
+    let startX = 0;
+    let startY = 0;
+    let disX = 0;
+    let disY = 0;
+    let disc = distance;
     //标记事件
     let swipeLeft = document.createEvent('HTMLEvents');
     swipeLeft.initEvent(`${pre}swipeLeft`, false, true);
@@ -103,64 +128,103 @@ export const event = (obj = { distance: 50, pre: '' }) => {
         // 触发自定义事件
         window.dispatchEvent(event);
     }
-    window.addEventListener("touchstart", function (ev) {
-        let startX = ev.targetTouches[0].pageX;
-        let startY = ev.targetTouches[0].pageY;
-        let disX = 0;
-        let disY = 0;
-        let disc = distance;
-        function fnMove(ev) {
-            let curX = ev.targetTouches[0].pageX;
-            let curY = ev.targetTouches[0].pageY;
-            disX = curX - startX;
-            disY = curY - startY;
-        }
-        function fnEnd() {
-            let dir = getDir();//1=>横屏 0=>竖屏
-            if (dir == 1) {
-                //设备横屏
+    if ("ontouchstart" in window && "ontouchstart" in document) {
+        window.addEventListener("touchstart", function (ev) {
+            startX = ev.targetTouches[0].pageX;
+            startY = ev.targetTouches[0].pageY;
+            disX = 0;
+            disY = 0;
+            disc = distance;
+            function fnMove(ev) {
+                let curX = ev.targetTouches[0].pageX;
+                let curY = ev.targetTouches[0].pageY;
+                disX = curX - startX;
+                disY = curY - startY;
+            }
+            function fnEnd() {
+                let dir = getDir();//1=>横屏 0=>竖屏
+                if (dir == 1) {
+                    //设备横屏
+                    if (disY < 0 && disY < Number(-disc)) {
+                        console.log("横屏Y上滑")
+                        dispatch(swipeTop, { dis: Math.abs(disY) });
+                    }
+                    else if (disY > 0 && disY > disc) {
+                        console.log("横屏Y下滑")
+                        dispatch(swipeBottom, { dis: Math.abs(disY) });
+                    }
+                    if (disX < 0 && disX < Number(-disc)) {
+                        console.log("横屏X左边滑")
+                        dispatch(swipeLeft, { dis: Math.abs(disX) });
+                    }
+                    else if (disX > 0 && disX > disc) {
+                        console.log("横屏x右边滑")
+                        dispatch(swipeRight, { dis: Math.abs(disX) });
+                    }
+
+                } else {
+                    //设备竖屏
+                    if (disY < 0 && disY < Number(-disc)) {
+                        console.log("竖屏X左边")
+                        dispatch(swipeLeft, { dis: Math.abs(disY) });
+                    }
+                    else if (disY > 0 && disY > disc) {
+                        console.log("竖屏X右边")
+                        dispatch(swipeRight, { dis: Math.abs(disY) });
+                    }
+                    //  console.log("disX < 0 && disX < Number(-disc)",Math.abs(disX),'++',disX,"??",disX < 0 && disX < Number(-disc))
+                    if (disX < 0 && disX < Number(-disc)) {
+                        //  alert("竖屏Y下滑")
+                        dispatch(swipeBottom, { dis: Math.abs(disX) });
+                    }
+                    else if (disX > 0 && disX > disc) {
+                        console.log("竖屏Y上滑")
+                        dispatch(swipeTop, { dis: Math.abs(disX) });
+                    }
+                }
+                window.removeEventListener('touchmove', fnMove, false);
+                window.removeEventListener('touchend', fnEnd, false);
+            }
+            window.addEventListener('touchmove', fnMove, false);
+            window.addEventListener('touchend', fnEnd, false);
+        }, false);
+    }
+    else {
+        window.addEventListener("mousedown", (ev) => {
+            let e = ev || window.event;
+            startX = e.clientX;
+            startY = e.clientY;
+            disX = 0;
+            disY = 0;
+            disc = distance;
+            function touchMove(e) {
+                disX = e.clientX - startX;
+                disY = e.clientY - startY;
+            }
+            function touchUp() {
                 if (disY < 0 && disY < Number(-disc)) {
-                    //alert("横屏Y上滑")
+                    // console.log("横屏Y上滑")
                     dispatch(swipeTop, { dis: Math.abs(disY) });
                 }
                 else if (disY > 0 && disY > disc) {
-                    // alert("横屏Y下滑")
+                    //console.log("横屏Y下滑")
                     dispatch(swipeBottom, { dis: Math.abs(disY) });
                 }
                 if (disX < 0 && disX < Number(-disc)) {
-                    // alert("横屏X左边滑")
+                    //console.log("横屏X左边滑")
                     dispatch(swipeLeft, { dis: Math.abs(disX) });
                 }
                 else if (disX > 0 && disX > disc) {
-                    // alert("横屏x右边滑")
+                    // console.log("横屏x右边滑")
                     dispatch(swipeRight, { dis: Math.abs(disX) });
                 }
-
-            } else {
-                //设备竖屏
-                if (disY < 0 && disY < Number(-disc)) {
-                    // alert("竖屏X左边")
-                    dispatch(swipeLeft, { dis: Math.abs(disY) });
-                }
-                else if (disY > 0 && disY > disc) {
-                    // alert("竖屏X右边")
-                    dispatch(swipeRight, { dis: Math.abs(disY) });
-                }
-                //  console.log("disX < 0 && disX < Number(-disc)",Math.abs(disX),'++',disX,"??",disX < 0 && disX < Number(-disc))
-                if (disX < 0 && disX < Number(-disc)) {
-                    //  alert("竖屏Y下滑")
-                    dispatch(swipeBottom, { dis: Math.abs(disX) });
-                }
-                else if (disX > 0 && disX > disc) {
-                    // alert("竖屏Y上滑")
-                    dispatch(swipeTop, { dis: Math.abs(disX) });
-                }
+                window.removeEventListener("mousemove", touchMove)
+                window.removeEventListener("mouseup", touchUp)
             }
-            window.removeEventListener('touchmove', fnMove, false);
-            window.removeEventListener('touchend', fnEnd, false);
-        }
-        window.addEventListener('touchmove', fnMove, false);
-        window.addEventListener('touchend', fnEnd, false);
-    }, false);
+            window.addEventListener("mousemove", touchMove, false);
+            window.addEventListener("mouseup", touchUp, false);
+        })
+    }
+
 }
 
