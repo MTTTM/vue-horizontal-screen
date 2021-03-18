@@ -147,30 +147,30 @@ export const event = (obj = { distance: 50, pre: '' }) => {
                 if (dir == 1) {
                     //设备横屏
                     if (disY < 0 && disY < Number(-disc)) {
-                        console.log("横屏Y上滑")
+                       // console.log("横屏Y上滑")
                         dispatch(swipeTop, { dis: Math.abs(disY) });
                     }
                     else if (disY > 0 && disY > disc) {
-                        console.log("横屏Y下滑")
+                       // console.log("横屏Y下滑")
                         dispatch(swipeBottom, { dis: Math.abs(disY) });
                     }
                     if (disX < 0 && disX < Number(-disc)) {
-                        console.log("横屏X左边滑")
+                      //  console.log("横屏X左边滑")
                         dispatch(swipeLeft, { dis: Math.abs(disX) });
                     }
                     else if (disX > 0 && disX > disc) {
-                        console.log("横屏x右边滑")
+                      //  console.log("横屏x右边滑")
                         dispatch(swipeRight, { dis: Math.abs(disX) });
                     }
 
                 } else {
                     //设备竖屏
                     if (disY < 0 && disY < Number(-disc)) {
-                        console.log("竖屏X左边")
+                      //  console.log("竖屏X左边")
                         dispatch(swipeLeft, { dis: Math.abs(disY) });
                     }
                     else if (disY > 0 && disY > disc) {
-                        console.log("竖屏X右边")
+                      //  console.log("竖屏X右边")
                         dispatch(swipeRight, { dis: Math.abs(disY) });
                     }
                     //  console.log("disX < 0 && disX < Number(-disc)",Math.abs(disX),'++',disX,"??",disX < 0 && disX < Number(-disc))
@@ -179,7 +179,7 @@ export const event = (obj = { distance: 50, pre: '' }) => {
                         dispatch(swipeBottom, { dis: Math.abs(disX) });
                     }
                     else if (disX > 0 && disX > disc) {
-                        console.log("竖屏Y上滑")
+                       // console.log("竖屏Y上滑")
                         dispatch(swipeTop, { dis: Math.abs(disX) });
                     }
                 }
