@@ -1,6 +1,6 @@
 {
   "name": "vue-horizontal-screen",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "license": "MIT",
   "private": false,
   "scripts": {
@@ -9,9 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "files": [
-    "src/index.js",
-    "./README.md",
-    "./babel.config.js"
+    "src/index.js"
   ],
   "keywords": [
     "vue",
