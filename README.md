@@ -15,6 +15,7 @@ npm install vue-horizontal-screen
 | cssVar  | css variable name | --hc-var |FALSE|
 | times  | Design draft multiple |--|TRUE|
 | disabledresized  | Disable response to trigger layout when window changes |FALSE|FALSE|
+| AdaptEventName |Adaptation status Event|hsAdapt|FALSE|
 
 ### params of event
 * params {obj} 
@@ -26,6 +27,7 @@ npm install vue-horizontal-screen
 * swipeRight
 * swipeTop
 * swipeBottom
+* hsAdapt
 
 ### css var usage
 ```scss
