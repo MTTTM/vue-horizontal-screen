@@ -8,7 +8,8 @@
           <div class="right" >50</div>
         </div>
         <div class="main">
-          Click to trigger screen adaptation when your window size changes && page does not adapt
+           <p style="color:red;">adapted:{{adapted}}</p>
+           <p> Click to trigger screen adaptation when your window size changes && page does not adapt</p>
         </div>
         <div class="footer"></div>
       </div>
@@ -26,11 +27,18 @@ export default {
         height: 1125,
         cssVar: "hc-var",
         times: 3,
-        disabledresized:true//Disable response to trigger layout when window changes
-      }
+        disabledresized:true,//Disable response to trigger layout when window changes
+        AdaptEventName:"",//Monitor adaptation status events，default is hsAdapt
+      },
+      adapted:true
     };
   },
   mounted() {
+    //watch Adapt status
+    window.addEventListener('hsAdapt', (obj)=>{
+      this.adapted=obj.data.data;
+      console.log("hsAdapt",obj.data.data)
+    });
     window.addEventListener('swipeLeft', function(obj){
       console.log("swipeLeft",obj.data.data)
       alert("swipeLeft")
@@ -47,6 +55,7 @@ export default {
       console.log("swipeBottom",obj.data.data)
        alert("swipeBottom")
     });
+    
   },
   methods: {
     reset(){

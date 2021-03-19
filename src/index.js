@@ -21,10 +21,32 @@ export const isMobile = () => {
         return false;
     }
 }
+// 派发自定义事件
+const dispatch = function (event, data) {
+    event.data = {
+        data
+    };
+    window.dispatchEvent(event);
+}
+/**
+ * 
+ * @param {*} AdaptEventName addEventLister name
+ * @param {*} el  dom
+ */
+const AdaptEvent = function (AdaptEventName, el) {
+    el.$adaptEvent = document.createEvent('HTMLEvents');
+    el.$adaptEvent.initEvent(AdaptEventName, false, true);
+}
 export const directive = {
     bind: function (el, binding) {
         
-        let { cssVar, width, height, times, disabledresized } = binding.value;
+        let { cssVar,
+            width,
+            height,
+            times,
+            disabledresized,
+            AdaptEventName
+        } = binding.value;
         let oneTimesWidth = width / times;
         let oneTimesHeight = height / times;
         if (!cssVar) {
@@ -33,6 +55,10 @@ export const directive = {
         if (!times) {
             times = 3;
         }
+        if (!AdaptEventName) {
+            AdaptEventName = "hsAdapt";
+        }
+        AdaptEvent(AdaptEventName, el);
         let eventFunc = function () {
             let clientWidth = document.documentElement.clientWidth;
             let clientHeight = document.documentElement.clientHeight;
@@ -70,10 +96,9 @@ export const directive = {
                 el.style.width = `${clientWidth}px`;
                 el.style.height = `${clientHeight}px`;
             }
-
-
+            el.$hsAdapted = true;//已适配
+            dispatch(el.$adaptEvent, el.$hsAdapted);
         }
-        el.$hsLayout = eventFunc;
         let timer;
         let eventFunTime = function () {
             clearTimeout(timer);
@@ -81,8 +106,14 @@ export const directive = {
                 eventFunc();
             }, 500);
         }
+        el.$hsLayout = eventFunc;
+        el.$hsAdapted = false;//已适配，disabledresized为false时候能用上
         el.fn = eventFunTime;
         el.fn();
+        window.addEventListener('resize', () => {
+            el.$hsAdapted = false;
+            dispatch(el.$adaptEvent, el.$hsAdapted);
+        }, false);
         if ("onorientationchange" in window) {
             window.removeEventListener('orientationchange', el.fn);
             window.addEventListener('orientationchange', el.fn, false);
@@ -121,14 +152,7 @@ export const event = (obj = { distance: 50, pre: '' }) => {
     swipeTop.initEvent(`${pre}swipeTop`, false, true);
     let swipeBottom = document.createEvent('HTMLEvents');
     swipeBottom.initEvent(`${pre}swipeBottom`, false, true);
-    //派发事件
-    function dispatch(event, data) {
-        event.data = {
-            data
-        };
-        // 触发自定义事件
-        window.dispatchEvent(event);
-    }
+
     if ("ontouchstart" in window && "ontouchstart" in document) {
         window.addEventListener("touchstart", function (ev) {
             startX = ev.targetTouches[0].pageX;
@@ -147,30 +171,30 @@ export const event = (obj = { distance: 50, pre: '' }) => {
                 if (dir == 1) {
                     //设备横屏
                     if (disY < 0 && disY < Number(-disc)) {
-                       // console.log("横屏Y上滑")
+                        // console.log("横屏Y上滑")
                         dispatch(swipeTop, { dis: Math.abs(disY) });
                     }
                     else if (disY > 0 && disY > disc) {
-                       // console.log("横屏Y下滑")
+                        // console.log("横屏Y下滑")
                         dispatch(swipeBottom, { dis: Math.abs(disY) });
                     }
                     if (disX < 0 && disX < Number(-disc)) {
-                      //  console.log("横屏X左边滑")
+                        //  console.log("横屏X左边滑")
                         dispatch(swipeLeft, { dis: Math.abs(disX) });
                     }
                     else if (disX > 0 && disX > disc) {
-                      //  console.log("横屏x右边滑")
+                        //  console.log("横屏x右边滑")
                         dispatch(swipeRight, { dis: Math.abs(disX) });
                     }
 
                 } else {
                     //设备竖屏
                     if (disY < 0 && disY < Number(-disc)) {
-                      //  console.log("竖屏X左边")
+                        //  console.log("竖屏X左边")
                         dispatch(swipeLeft, { dis: Math.abs(disY) });
                     }
                     else if (disY > 0 && disY > disc) {
-                      //  console.log("竖屏X右边")
+                        //  console.log("竖屏X右边")
                         dispatch(swipeRight, { dis: Math.abs(disY) });
                     }
                     //  console.log("disX < 0 && disX < Number(-disc)",Math.abs(disX),'++',disX,"??",disX < 0 && disX < Number(-disc))
@@ -179,7 +203,7 @@ export const event = (obj = { distance: 50, pre: '' }) => {
                         dispatch(swipeBottom, { dis: Math.abs(disX) });
                     }
                     else if (disX > 0 && disX > disc) {
-                       // console.log("竖屏Y上滑")
+                        // console.log("竖屏Y上滑")
                         dispatch(swipeTop, { dis: Math.abs(disX) });
                     }
                 }
