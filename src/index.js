@@ -11,6 +11,14 @@ export const getDir = () => {
         return 0;
     }
 }
+/**
+ * @description isImmersiveNav
+ */
+export const isImmersive=()=>{
+    let wHeight=window.innerHeight;
+    let dHeight=document.documentElement.clientHeight;
+    return wHeight>dHeight;
+}
 export const isMobile = () => {
     let ua = navigator.userAgent.toLowerCase();
     let canTouch = "ontouchstart" in window && "ontouchstart" in document
@@ -60,8 +68,8 @@ export const directive = {
         }
         AdaptEvent(AdaptEventName, el);
         let eventFunc = function () {
-            let clientWidth = document.documentElement.clientWidth;
-            let clientHeight = document.documentElement.clientHeight;
+            let clientWidth = window.innerWidth||document.documentElement.clientWidth;
+            let clientHeight = window.innerHeight||document.documentElement.clientHeight;
             let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
             let percent = maxWidth / oneTimesWidth;
             let isPc = !isMobile();
