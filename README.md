@@ -13,13 +13,14 @@ npm install vue-horizontal-screen
 
 ### Directive
 
-| key            | desc                    | default  | required |
-| -------------- | ----------------------- | -------- | -------- |
-| width          | Design draft width      | --       | TRUE     |
-| height         | Design draft height     | --       | TRUE     |
-| cssVar         | css variable name       | --hc-var | FALSE    |
-| times          | Design draft multiple   | --       | TRUE     |
-| AdaptEventName | Adaptation status Event | hsAdapt  | FALSE    |
+| key            | desc                                           | default  | required |
+| -------------- | ---------------------------------------------- | -------- | -------- |
+| width          | Design draft width                             | --       | TRUE     |
+| height         | Design draft height                            | --       | TRUE     |
+| cssVar         | css variable name                              | --hc-var | FALSE    |
+| times          | Design draft multiple                          | --       | TRUE     |
+| triggerTime    | Time to trigger adaptation after window change | 1000     | FALSE    |
+| AdaptEventName | Adaptation status Event                        | hsAdapt  | FALSE    |
 
 ### params of event
 

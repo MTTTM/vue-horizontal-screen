@@ -50,6 +50,7 @@ export const directive = {
             width,
             height,
             times,
+            triggerTime,
             AdaptEventName
         } = binding.value;
         if (!times) {
@@ -63,6 +64,9 @@ export const directive = {
         }
         if (!AdaptEventName) {
             AdaptEventName = "hsAdapt";
+        }
+        if(!triggerTime){
+            triggerTime=1000;
         }
         AdaptEvent(AdaptEventName, el);
         let eventFunc = function () {
@@ -107,7 +111,7 @@ export const directive = {
             clearTimeout(timer);
             timer = setTimeout(() => {
                 eventFunc();
-            }, 600);
+            }, triggerTime);
         }
         el.$hsLayout = eventFunc;
         el.$hsAdapted = false;

@@ -34,26 +34,28 @@ export default {
   },
   mounted() {
     //watch Adapt status
-    // window.addEventListener("hsAdapt", (obj) => {
-    //   this.adapted = obj.data.data;
-    //   //console.log("hsAdapt", obj.data.data);
     // });
-    // window.addEventListener("swipeLeft", function (obj) {
-    //   console.log("swipeLeft", obj.data.data);
-    //   alert("swipeLeft");
-    // });
-    // window.addEventListener("swipeRight", function (obj) {
-    //   console.log("swipeRight", obj.data.data);
-    //   alert("swipeRight");
-    // });
-    // window.addEventListener("swipeTop", function (obj) {
-    //   console.log("swipeTop", obj.data.data);
-    //   alert("swipeTop");
-    // });
-    // window.addEventListener("swipeBottom", function (obj) {
-    //   console.log("swipeBottom", obj.data.data);
-    //   alert("swipeBottom");
-    // });
+    window.addEventListener("hsAdapt", (obj) => {
+      this.adapted = obj.data.data;
+      //console.log("hsAdapt", obj.data.data);
+      //alert("22");
+    });
+    window.addEventListener("swipeLeft", function (obj) {
+      console.log("swipeLeft", obj.data.data);
+      alert("swipeLeft");
+    });
+    window.addEventListener("swipeRight", function (obj) {
+      console.log("swipeRight", obj.data.data);
+      alert("swipeRight");
+    });
+    window.addEventListener("swipeTop", function (obj) {
+      console.log("swipeTop", obj.data.data);
+      alert("swipeTop");
+    });
+    window.addEventListener("swipeBottom", function (obj) {
+      console.log("swipeBottom", obj.data.data);
+      alert("swipeBottom");
+    });
   },
   methods: {
     reset() {
