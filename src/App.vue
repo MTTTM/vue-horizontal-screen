@@ -5,11 +5,10 @@
         <div class="header">
           <div class="left">25</div>
           <div class="mid">40</div>
-          <div class="right" >50</div>
+          <div class="right">50</div>
         </div>
         <div class="main">
-           <p style="color:red;">adapted:{{adapted}}</p>
-           <p> Click to trigger screen adaptation when your window size changes && page does not adapt</p>
+          <p>Let's do it!!</p>
         </div>
         <div class="footer"></div>
       </div>
@@ -27,40 +26,39 @@ export default {
         height: 1125,
         cssVar: "hc-var",
         times: 3,
-        disabledresized:true,//Disable response to trigger layout when window changes
-        AdaptEventName:"",//Monitor adaptation status events，default is hsAdapt
+        disabledresized: false, //removed after v0.1.7
+        AdaptEventName: "", //Monitor adaptation status events，default is hsAdapt
       },
-      adapted:true
+      adapted: true,
     };
   },
   mounted() {
     //watch Adapt status
-    window.addEventListener('hsAdapt', (obj)=>{
-      this.adapted=obj.data.data;
-      console.log("hsAdapt",obj.data.data)
-    });
-    // window.addEventListener('swipeLeft', function(obj){
-    //   console.log("swipeLeft",obj.data.data)
-    //   alert("swipeLeft")
+    // window.addEventListener("hsAdapt", (obj) => {
+    //   this.adapted = obj.data.data;
+    //   //console.log("hsAdapt", obj.data.data);
     // });
-    // window.addEventListener('swipeRight', function(obj){
-    //   console.log("swipeRight",obj.data.data)
-    //    alert("swipeRight")
+    // window.addEventListener("swipeLeft", function (obj) {
+    //   console.log("swipeLeft", obj.data.data);
+    //   alert("swipeLeft");
     // });
-    // window.addEventListener('swipeTop', function(obj){
-    //   console.log("swipeTop",obj.data.data)
-    //    alert("swipeTop")
+    // window.addEventListener("swipeRight", function (obj) {
+    //   console.log("swipeRight", obj.data.data);
+    //   alert("swipeRight");
     // });
-    // window.addEventListener('swipeBottom', function(obj){
-    //   console.log("swipeBottom",obj.data.data)
-    //    alert("swipeBottom")
+    // window.addEventListener("swipeTop", function (obj) {
+    //   console.log("swipeTop", obj.data.data);
+    //   alert("swipeTop");
     // });
-    
+    // window.addEventListener("swipeBottom", function (obj) {
+    //   console.log("swipeBottom", obj.data.data);
+    //   alert("swipeBottom");
+    // });
   },
   methods: {
-    reset(){
-      this.$refs['hscreen'].$hsLayout();
-    }
+    reset() {
+      this.$refs["hscreen"].$hsLayout();
+    },
   },
 };
 </script>
@@ -70,12 +68,14 @@ export default {
   margin: 0;
   padding: 0;
 }
+
 html,
 body,
 #app {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  //touch-action: none;
 }
 @function px($num) {
   @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
@@ -85,10 +85,14 @@ body,
   justify-content: center;
   align-items: center;
   background: #fff;
+  word-wrap: break-word;
 }
 #wrap {
   width: px(667 * 3);
   height: px(375 * 3);
+}
+p {
+  font-size: px(16 * 3);
 }
 .header {
   height: px(50 * 3);
@@ -114,6 +118,9 @@ body,
 .main {
   height: px(275 * 3);
   background: green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .footer {
   height: px(50 * 3);

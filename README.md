@@ -1,35 +1,42 @@
 # vue-horizontal-screen
+
 ## Desc
-* It provides horizontal web page layout and events.[online](https://2gt9f.csb.app/)
-* Support computer(Version 0.1.3 or greater)
+
+- It provides horizontal web page layout and events.[online](https://2gt9f.csb.app/)
+- Support computer(Version 0.1.3 or greater)
 
 ## Start
+
 ```
 npm install vue-horizontal-screen
 ```
+
 ### Directive
-|  key   | desc  |default |required|
-|  ----  | ----  |---| ---|
-| width  | Design draft width | -- | TRUE|
-| height  | Design draft height | --|TRUE|
-| cssVar  | css variable name | --hc-var |FALSE|
-| times  | Design draft multiple |--|TRUE|
-| disabledresized  | Disable response to trigger layout when window changes |FALSE|FALSE|
-| AdaptEventName |Adaptation status Event|hsAdapt|FALSE|
+
+| key            | desc                    | default  | required |
+| -------------- | ----------------------- | -------- | -------- |
+| width          | Design draft width      | --       | TRUE     |
+| height         | Design draft height     | --       | TRUE     |
+| cssVar         | css variable name       | --hc-var | FALSE    |
+| times          | Design draft multiple   | --       | TRUE     |
+| AdaptEventName | Adaptation status Event | hsAdapt  | FALSE    |
 
 ### params of event
-* params {obj} 
-*  description pre {string} Event name prefix
-*  description distance {number}  The distance to trigger the event, default 50
+
+- params {obj}
+- description pre {string} Event name prefix
+- description distance {number} The distance to trigger the event, default 50
 
 ### event name
-* swipeLeft
-* swipeRight
-* swipeTop
-* swipeBottom
-* hsAdapt
+
+- swipeLeft
+- swipeRight
+- swipeTop
+- swipeBottom
+- hsAdapt
 
 ### css var usage
+
 ```scss
 @function px($num) {
   @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
@@ -39,22 +46,29 @@ npm install vue-horizontal-screen
   background: green;
 }
 ```
+
 ### trigger screen adaptation
+
 ```javascript
-  this.$refs['hscreen'].$hsLayout();
+this.$refs["hscreen"].$hsLayout();
 ```
 
 ### Usage demo
-### Design draft size  （667 * 3）*（375 * 3）;
+
+### Design draft size （667 _ 3）_（375 \* 3）;
+
 #### main.js
+
 ```javascript
- import {directive,event} from "vue-horizontal-screen"
- Vue.directive('horizontal-screen', {...directive});
- event();//  addEventListener
+import { directive, event } from "vue-horizontal-screen";
+Vue.directive("horizontal-screen", { ...directive });
+event(); //  addEventListener
 ```
+
 #### vue template
+
 ```html
- <template>
+<template>
   <div id="app" @click="reset">
     <div v-horizontal-screen="obj" class="box" ref="hscreen">
       <div id="wrap">
@@ -72,6 +86,7 @@ npm install vue-horizontal-screen
 ```
 
 #### vue script
+
 ```javascript
 export default {
   name: "App",
@@ -86,27 +101,29 @@ export default {
     };
   },
   mounted() {
-    window.addEventListener('swipeLeft', function(obj){
-      console.log("swipeLeft",obj.data.data)
+    window.addEventListener("swipeLeft", function(obj) {
+      console.log("swipeLeft", obj.data.data);
     });
-    window.addEventListener('swipeRight', function(obj){
-      console.log("swipeRight",obj.data.data)
+    window.addEventListener("swipeRight", function(obj) {
+      console.log("swipeRight", obj.data.data);
     });
-    window.addEventListener('swipeTop', function(obj){
-      console.log("swipeTop",obj.data.data)
+    window.addEventListener("swipeTop", function(obj) {
+      console.log("swipeTop", obj.data.data);
     });
-    window.addEventListener('swipeBottom', function(obj){
-      console.log("swipeBottom",obj.data.data)
+    window.addEventListener("swipeBottom", function(obj) {
+      console.log("swipeBottom", obj.data.data);
     });
   },
   methods: {
-    reset(){
-      this.$refs['hscreen'].$hsLayout();
+    reset() {
+      this.$refs["hscreen"].$hsLayout();
     }
   }
 };
 ```
+
 #### scss
+
 ```scss
 * {
   margin: 0;
