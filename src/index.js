@@ -127,10 +127,6 @@ function fnStartParams(obj={}){
          },
          doms:function(swipeName,data){
             callback(data,el);
-            //  if(eventMaps[swipeName]&&eventMaps[swipeName]instanceof Event){
-            //      dispatch(eventMaps[swipeName], data);
-            //  }
-             
          },
      }
      return function(ev){
