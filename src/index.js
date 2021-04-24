@@ -36,7 +36,18 @@ const dispatch = function (event, data) {
     };
     window.dispatchEvent(event);
 }
+//事件兼容处理
+function eventFix(event){
+    var touch;
+    if(event.touches) {
+        touch = event.targetTouches[0];
+    } else {
+        touch = event||window.event;
+    }
+    return touch;
+}
 /**
+ * 初始化适配事件
  * @param {*} AdaptEventName addEventLister name
  * @param {*} el  dom
  */
@@ -44,6 +55,89 @@ const AdaptEvent = function (AdaptEventName, el) {
     el.$adaptEvent = document.createEvent('HTMLEvents');
     el.$adaptEvent.initEvent(AdaptEventName, false, true);
 }
+//鼠标点下
+function fnStartParams(obj={}){
+    return function(ev){
+         var touch=eventFix(ev);
+         obj.startX = touch.clientX;
+         obj.startY = touch.clientY;
+         obj.disX = 0;
+         obj.disY = 0;
+         obj.disc = obj.distance;
+    }
+ }
+ //鼠标移动
+ function fnMoveParams(obj={}){
+     return function(ev){
+         var touch=eventFix(ev);
+         let curX = touch.clientX;
+         let curY = touch.clientY;
+         obj.disX = curX - obj.startX;
+         obj.disY = curY - obj.startY;
+     }
+ }
+ //鼠标放开
+ function fnEndParams(callbackType="",baseInfo={},eventMaps={}){
+     let swipes={
+         win:function(swipeName,data){
+             if(eventMaps[swipeName]&&eventMaps[swipeName]instanceof Event){
+                 dispatch(eventMaps[swipeName], data);
+             }
+             else{
+                 console.error(`events ${swipeName} of window is no reigstered`);
+             }
+         },
+         doms:function(swipeName,data){
+             if(eventMaps[swipeName]&&eventMaps[swipeName]instanceof Event){
+                 dispatch(eventMaps[swipeName], data);
+             }
+             else{
+                 console.error(`events ${swipeName} of dom is no reigstered`);
+             }
+         },
+     }
+     return function(){
+         let dir = getDir();//1=>横屏 0=>竖屏
+         let {disY,disc,disX}=baseInfo;
+         if (dir == 1||!isMobile()) {
+             if (disY < 0 && disY < Number(-disc)) {
+                // dispatch(swipeTop, { dis: Math.abs(disY) });
+                swipes[callbackType]("swipeTop",{ dis: Math.abs(disY) });
+             }
+             else if (disY > 0 && disY > disc) {
+                // dispatch(swipeBottom, { dis: Math.abs(disY) });
+                swipes[callbackType]("swipeBottom", { dis: Math.abs(disY)});
+             }
+             if (disX < 0 && disX < Number(-disc)) {
+                // dispatch(swipeLeft, { dis: Math.abs(disX) });
+                swipes[callbackType]("swipeLeft", { dis: Math.abs(disX) });
+             }
+             else if (disX > 0 && disX > disc) {
+                // dispatch(swipeRight, { dis: Math.abs(disX) });
+                swipes[callbackType]("swipeRight", { dis: Math.abs(disX) });
+             }
+ 
+         } else {
+             //设备竖屏
+             if (disY < 0 && disY < Number(-disc)) {
+                // dispatch(swipeLeft, { dis: Math.abs(disY) });
+                 swipes[callbackType]("swipeLeft",{ dis: Math.abs(disY) });
+             }
+             else if (disY > 0 && disY > disc) {
+                // dispatch(swipeRight, { dis: Math.abs(disY) });
+                 swipes[callbackType]("swipeRight",{ dis: Math.abs(disY) });
+             }
+             if (disX < 0 && disX < Number(-disc)) {
+                 //dispatch(swipeBottom, { dis: Math.abs(disX) });
+                 swipes[callbackType]("swipeBottom",{ dis: Math.abs(disX) });
+             }
+             else if (disX > 0 && disX > disc) {
+                // dispatch(swipeTop, { dis: Math.abs(disX) });
+                swipes[callbackType]("swipeTop",{ dis: Math.abs(disX) });
+             }
+         }
+     }
+ }
 export const directive = {
     bind: function (el, binding) {
         let { cssVar,
@@ -141,11 +235,12 @@ export const directive = {
  */
 export const event = (obj = { distance: 50, pre: '' }) => {
     let { pre, distance } = obj;
-    let startX = 0;
-    let startY = 0;
-    let disX = 0;
-    let disY = 0;
-    let disc = distance;
+    let baseInfo={
+        startX:0,
+        startY:0,
+        disX:0,
+        distance
+    }
     //标记事件
     let swipeLeft = document.createEvent('HTMLEvents');
     swipeLeft.initEvent(`${pre}swipeLeft`, false, true);
@@ -155,73 +250,16 @@ export const event = (obj = { distance: 50, pre: '' }) => {
     swipeTop.initEvent(`${pre}swipeTop`, false, true);
     let swipeBottom = document.createEvent('HTMLEvents');
     swipeBottom.initEvent(`${pre}swipeBottom`, false, true);
-
-    function eventFix(event){
-        var touch;
-        if(event.touches) {
-            touch = event.targetTouches[0];
-        } else {
-            touch = event||window.event;
-        }
-        return touch;
-    }
-    function fnStart(ev) {
-        var touch=eventFix(ev);
-        startX = touch.clientX;
-        startY = touch.clientY;
-        disX = 0;
-        disY = 0;
-        disc = distance;
-    }
-    function fnMove(ev) {
-        var touch=eventFix(ev);
-        let curX = touch.clientX;
-        let curY = touch.clientY;
-        disX = curX - startX;
-        disY = curY - startY;
-    }
-    function fnEnd() {
-        let dir = getDir();//1=>横屏 0=>竖屏
-        if (dir == 1||!isMobile()) {
-            if (disY < 0 && disY < Number(-disc)) {
-                dispatch(swipeTop, { dis: Math.abs(disY) });
-            }
-            else if (disY > 0 && disY > disc) {
-                dispatch(swipeBottom, { dis: Math.abs(disY) });
-            }
-            if (disX < 0 && disX < Number(-disc)) {
-                dispatch(swipeLeft, { dis: Math.abs(disX) });
-            }
-            else if (disX > 0 && disX > disc) {
-                dispatch(swipeRight, { dis: Math.abs(disX) });
-            }
-
-        } else {
-            //设备竖屏
-            if (disY < 0 && disY < Number(-disc)) {
-                dispatch(swipeLeft, { dis: Math.abs(disY) });
-            }
-            else if (disY > 0 && disY > disc) {
-                dispatch(swipeRight, { dis: Math.abs(disY) });
-            }
-            if (disX < 0 && disX < Number(-disc)) {
-                dispatch(swipeBottom, { dis: Math.abs(disX) });
-            }
-            else if (disX > 0 && disX > disc) {
-                dispatch(swipeTop, { dis: Math.abs(disX) });
-            }
-        }
-    }
-
+    let eventMaps={swipeLeft,swipeRight,swipeTop,swipeBottom};
     if (isMobile()) {
-        window.addEventListener("touchstart",fnStart, false);
-        window.addEventListener('touchmove', fnMove, false);
-        window.addEventListener('touchend', fnEnd, false);
+        window.addEventListener("touchstart",fnStartParams(baseInfo), false);
+        window.addEventListener('touchmove', fnMoveParams(baseInfo), false);
+        window.addEventListener('touchend', fnEndParams('win',baseInfo,eventMaps), false);
     }
     else {
-        window.addEventListener("mousedown",fnStart,false )
-        window.addEventListener("mousemove", fnMove, false);
-        window.addEventListener("mouseup", fnEnd, false);
+        window.addEventListener("mousedown",fnStartParams(baseInfo),false )
+        window.addEventListener("mousemove", fnMoveParams(baseInfo), false);
+        window.addEventListener("mouseup", fnEndParams('win',baseInfo,eventMaps), false);
     }
 }
 
