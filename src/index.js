@@ -42,7 +42,7 @@ export const isMobile = () => {
  *  派发自定义事件
  * @param {Event} event 
  * @param {*} data 
- * @param {Window or Document} target 
+ * @param {Null or Document} target 
  */
 const dispatch = function (event, data,target=null) {
     event.data = {
@@ -55,6 +55,16 @@ const dispatch = function (event, data,target=null) {
         target['dispatchEvent'](event);
     }
 }
+/**
+ * 注册事件，并且返回
+ * @param {String} eventName 
+ * @returns {Event}
+ */
+ function createEvent(eventName){
+    let e = document.createEvent('HTMLEvents');
+    e.initEvent(eventName, false, true);
+    return  e;
+}
 //事件兼容处理
 function eventFix(event){
     var touch;
@@ -65,17 +75,12 @@ function eventFix(event){
     }
     return touch;
 }
+
 /**
- * 注册事件，并且返回
- * @param {*} eventName 
- * @returns 
+ * 鼠标按下
+ * @param {*} obj 
+ * @returns {Function}
  */
-function createEvent(eventName){
-    let e = document.createEvent('HTMLEvents');
-    e.initEvent(eventName, false, true);
-    return  e;
-}
-//鼠标点下
 function fnStartParams(obj={}){
     return function(ev){
          var touch=eventFix(ev);
@@ -86,7 +91,11 @@ function fnStartParams(obj={}){
          obj.disc = obj.distance;
     }
  }
- //鼠标移动
+/**
+ *鼠标移动
+ * @param {*} obj 
+ * @returns {Function}
+ */
  function fnMoveParams(obj={}){
      return function(ev){
          var touch=eventFix(ev);
