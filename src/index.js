@@ -269,7 +269,6 @@ export const directiveForDom = {
             distance:1
         }
         el.$stop=stop;
-        console.log("stop",stop)
         //标记事件
         let startFn=fnStartParams(baseInfo);
         let moveFn=fnMoveParams(baseInfo);
