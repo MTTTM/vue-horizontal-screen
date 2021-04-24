@@ -8,7 +8,12 @@
           <div class="right">50</div>
         </div>
         <div class="main">
-          <p>Let's do it!!</p>
+          <p>Try swipe！Let's do it!!</p>
+          <div v-hs-swipe.stop="hsSwipe" class="dom-event">
+            <p>Red block is Dom Swipe area.</p>
+            <h3>swipe type:{{ domSwipe }}</h3>
+          </div>
+          <p>window swipe area</p>
         </div>
         <div class="footer"></div>
       </div>
@@ -29,37 +34,52 @@ export default {
         disabledresized: false, //removed after v0.1.7
         AdaptEventName: "", //Monitor adaptation status events，default is hsAdapt
       },
-      adapted: true,
+      domSwipe: "--",
     };
   },
   mounted() {
-    //watch Adapt status
-    // });
-    window.addEventListener("hsAdapt", (obj) => {
-      this.adapted = obj.data.data;
-      console.log("hsAdapt", obj.data.data);
-      //alert("22");
-    });
-    window.addEventListener("swipeLeft", function (obj) {
-      console.log("swipeLeft", obj.data.data);
-      alert("swipeLeft");
-    });
-    window.addEventListener("swipeRight", function (obj) {
-      console.log("swipeRight", obj.data.data);
-      alert("swipeRight");
-    });
-    window.addEventListener("swipeTop", function (obj) {
-      console.log("swipeTop", obj.data.data);
-      alert("swipeTop");
-    });
-    window.addEventListener("swipeBottom", function (obj) {
-      console.log("swipeBottom", obj.data.data);
-      alert("swipeBottom");
-    });
+    window.addEventListener("hsAdapt", this.swipeCallback);
+    window.addEventListener("swipeLeft", this.swipeCallback);
+    window.addEventListener("swipeRight", this.swipeCallback);
+    window.addEventListener("swipeTop", this.swipeCallback);
+    window.addEventListener("swipeBottom", this.swipeCallback);
+  },
+  beforeDestroy() {
+    /*don't forget to remove eventlistener!!*/
+    window.removeEventListener("hsAdapt", this.swipeCallback);
+    window.removeEventListener("swipeLeft", this.swipeCallback);
+    window.removeEventListener("swipeRight", this.swipeCallback);
+    window.removeEventListener("swipeTop", this.swipeCallback);
+    window.removeEventListener("swipeBottom", this.swipeCallback);
   },
   methods: {
+    swipeCallback(obj) {
+      if (obj.data.data.type) {
+        alert(obj.data.data.type);
+      } else {
+        alert("hsAdapt");
+      }
+    },
     reset() {
-      this.$refs["hscreen"].$hsLayout();
+      // this.$refs["hscreen"].$hsLayout();
+    },
+    hsSwipe(data, el) {
+      let { type, dis } = data;
+      console.log("dom event", data, type, dis, el);
+      if (type == "swipeLeft" && dis >= 20) {
+        this.domSwipe = "swipeLeft";
+        console.log("swipeLeft");
+      } else if (type == "swipeRight" && dis >= 20) {
+        console.log("swipeRight");
+        this.domSwipe = "swipeRight";
+      }
+      if (type == "swipeBottom" && dis >= 5) {
+        console.log("swipeBottom");
+        this.domSwipe = "swipeBottom";
+      } else if (type == "swipeTop" && dis >= 5) {
+        console.log("swipeTop");
+        this.domSwipe = "swipeTop";
+      }
     },
   },
 };
@@ -95,6 +115,8 @@ body,
 }
 p {
   font-size: px(16 * 3);
+  text-align: center;
+  line-height: 1.4;
 }
 .header {
   height: px(50 * 3);
@@ -121,6 +143,14 @@ p {
   height: px(275 * 3);
   background: green;
   display: flex;
+  flex-direction: column;
+}
+.dom-event {
+  height: 50%;
+  background: red;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }

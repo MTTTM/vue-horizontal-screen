@@ -13,14 +13,19 @@ npm install vue-horizontal-screen
 
 ### Directive
 
-| key            | desc                                           | default  | required |
-| -------------- | ---------------------------------------------- | -------- | -------- |
-| width          | Design draft width                             | --       | TRUE     |
-| height         | Design draft height                            | --       | TRUE     |
-| cssVar         | css variable name                              | --hc-var | FALSE    |
-| times          | Design draft multiple                          | --       | TRUE     |
-| triggerTime    | Time to trigger adaptation after window change | 1000     | FALSE    |
-| AdaptEventName | Adaptation status Event                        | hsAdapt  | FALSE    |
+| key            | desc                                                                     | default  | required |
+| -------------- | ------------------------------------------------------------------------ | -------- | -------- |
+| width          | Design draft width                                                       | --       | TRUE     |
+| height         | Design draft height                                                      | --       | TRUE     |
+| cssVar         | css variable name                                                        | --hc-var | FALSE    |
+| times          | Design draft multiple                                                    | --       | TRUE     |
+| triggerTime    | Time to trigger adaptation after window change(no work on computer side) | 1000     | FALSE    |
+| AdaptEventName | Adaptation status Event                                                  | hsAdapt  | FALSE    |
+
+### directiveForDom
+
+- Bind events to nodes
+- Modifier:`.stop` event.stopPropagation(),When you use it, window events will not be triggered by this node
 
 ### params of event
 
@@ -61,8 +66,9 @@ this.$refs["hscreen"].$hsLayout();
 #### main.js
 
 ```javascript
-import { directive, event } from "vue-horizontal-screen";
+import { directive, event, directiveForDom } from "vue-horizontal-screen";
 Vue.directive("horizontal-screen", { ...directive });
+Vue.directive("hs-swipe", { ...directiveForDom });
 event(); //  addEventListener
 ```
 
@@ -78,7 +84,10 @@ event(); //  addEventListener
           <div class="mid">40</div>
           <div class="right">50</div>
         </div>
-        <div class="main"></div>
+        <div class="main">
+          <p>Let's do it!!</p>
+          <div v-hs-swipe.stop="hsSwipe" class="dom-event">Dom Swipe Event</div>
+        </div>
         <div class="footer"></div>
       </div>
     </div>
@@ -102,22 +111,44 @@ export default {
     };
   },
   mounted() {
-    window.addEventListener("swipeLeft", function(obj) {
-      console.log("swipeLeft", obj.data.data);
-    });
-    window.addEventListener("swipeRight", function(obj) {
-      console.log("swipeRight", obj.data.data);
-    });
-    window.addEventListener("swipeTop", function(obj) {
-      console.log("swipeTop", obj.data.data);
-    });
-    window.addEventListener("swipeBottom", function(obj) {
-      console.log("swipeBottom", obj.data.data);
-    });
+    window.addEventListener("hsAdapt", this.swipeCallback);
+    window.addEventListener("swipeLeft", this.swipeCallback);
+    window.addEventListener("swipeRight", this.swipeCallback);
+    window.addEventListener("swipeTop", this.swipeCallback);
+    window.addEventListener("swipeBottom", this.swipeCallback);
+  },
+  beforeDestroy() {
+    /*don't forget to remove eventlistener!!*/
+    window.removeEventListener("hsAdapt", this.swipeCallback);
+    window.removeEventListener("swipeLeft", this.swipeCallback);
+    window.removeEventListener("swipeRight", this.swipeCallback);
+    window.removeEventListener("swipeTop", this.swipeCallback);
+    window.removeEventListener("swipeBottom", this.swipeCallback);
   },
   methods: {
+    swipeCallback(obj) {
+      if (obj.data.data.type) {
+        alert(obj.data.data.type);
+      } else {
+        alert("hsAdapt");
+      }
+    },
     reset() {
       this.$refs["hscreen"].$hsLayout();
+    },
+    hsSwipe(data, el) {
+      let { type, dis } = data;
+      console.log("dom event", data, type, dis, el);
+      if (type == "swipeLeft" && dis >= 20) {
+        console.log("swipeLeft");
+      } else if (type == "swipeRight" && dis >= 20) {
+        console.log("swipeRight");
+      }
+      if (type == "swipeBottom" && dis >= 5) {
+        console.log("swipeBottom");
+      } else if (type == "swipeTop" && dis >= 5) {
+        console.log("swipeTop");
+      }
     }
   }
 };

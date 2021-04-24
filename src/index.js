@@ -106,63 +106,66 @@ function fnStartParams(obj={}){
      }
  }
  //鼠标放开
- function fnEndParams(callbackType="",baseInfo={},eventMaps={}){
+ /**
+  * 
+  * @param {String} callbackType 
+  * @param {Object} baseInfo 
+  * @param {Object<Event>} eventMaps 
+  * @param {Function} callback  dom的自定义事件回调函数
+  * @param {Document} el  dom
+  * @returns 
+  */
+ function fnEndParams(callbackType="",baseInfo={},eventMaps={},callback,el){
      let swipes={
          win:function(swipeName,data){
              if(eventMaps[swipeName]&&eventMaps[swipeName]instanceof Event){
                  dispatch(eventMaps[swipeName], data);
              }
              else{
-                 console.error(`events ${swipeName} of window is no reigstered`);
+                 console.error(`events [${swipeName}] of window is no reigstered`);
              }
          },
          doms:function(swipeName,data){
-             if(eventMaps[swipeName]&&eventMaps[swipeName]instanceof Event){
-                 dispatch(eventMaps[swipeName], data);
-             }
-             else{
-                 console.error(`events ${swipeName} of dom is no reigstered`);
-             }
+            callback(data,el);
+            //  if(eventMaps[swipeName]&&eventMaps[swipeName]instanceof Event){
+            //      dispatch(eventMaps[swipeName], data);
+            //  }
+             
          },
      }
-     return function(){
+     return function(ev){
          let dir = getDir();//1=>横屏 0=>竖屏
          let {disY,disc,disX}=baseInfo;
+         if(el&&el.$stop){
+            ev.stopPropagation();
+         }
          if (dir == 1||!isMobile()) {
              if (disY < 0 && disY < Number(-disc)) {
-                // dispatch(swipeTop, { dis: Math.abs(disY) });
-                swipes[callbackType]("swipeTop",{ dis: Math.abs(disY) });
+                swipes[callbackType]("swipeTop",{ dis: Math.abs(disY),type:"swipeTop" });
              }
              else if (disY > 0 && disY > disc) {
-                // dispatch(swipeBottom, { dis: Math.abs(disY) });
-                swipes[callbackType]("swipeBottom", { dis: Math.abs(disY)});
+                swipes[callbackType]("swipeBottom", { dis: Math.abs(disY),type:"swipeBottom"});
              }
              if (disX < 0 && disX < Number(-disc)) {
-                // dispatch(swipeLeft, { dis: Math.abs(disX) });
-                swipes[callbackType]("swipeLeft", { dis: Math.abs(disX) });
+                swipes[callbackType]("swipeLeft", { dis: Math.abs(disX),type:"swipeLeft" });
              }
              else if (disX > 0 && disX > disc) {
-                // dispatch(swipeRight, { dis: Math.abs(disX) });
-                swipes[callbackType]("swipeRight", { dis: Math.abs(disX) });
+                swipes[callbackType]("swipeRight", { dis: Math.abs(disX),type:"swipeRight" });
              }
  
          } else {
              //设备竖屏
              if (disY < 0 && disY < Number(-disc)) {
-                // dispatch(swipeLeft, { dis: Math.abs(disY) });
-                 swipes[callbackType]("swipeLeft",{ dis: Math.abs(disY) });
+                 swipes[callbackType]("swipeLeft",{ dis: Math.abs(disY),type:"swipeLeft" });
              }
              else if (disY > 0 && disY > disc) {
-                // dispatch(swipeRight, { dis: Math.abs(disY) });
-                 swipes[callbackType]("swipeRight",{ dis: Math.abs(disY) });
+                 swipes[callbackType]("swipeRight",{ dis: Math.abs(disY),type:"swipeRight" });
              }
              if (disX < 0 && disX < Number(-disc)) {
-                 //dispatch(swipeBottom, { dis: Math.abs(disX) });
-                 swipes[callbackType]("swipeBottom",{ dis: Math.abs(disX) });
+                 swipes[callbackType]("swipeBottom",{ dis: Math.abs(disX),type:"swipeBottom" });
              }
              else if (disX > 0 && disX > disc) {
-                // dispatch(swipeTop, { dis: Math.abs(disX) });
-                swipes[callbackType]("swipeTop",{ dis: Math.abs(disX) });
+                swipes[callbackType]("swipeTop",{ dis: Math.abs(disX),type:"swipeTop" });
              }
          }
      }
@@ -253,6 +256,37 @@ export const directive = {
         window.removeEventListener('resize', el.fn, false);
         window.removeEventListener('orientationchange', el.fn, false);
         el.$hsLayout = null;
+    }
+}
+export const directiveForDom = {
+    bind: function (el, binding) {
+        let callback= binding.value;
+        let {stop}=binding.modifiers;
+        let baseInfo={
+            startX:0,
+            startY:0,
+            disX:0,
+            distance:1
+        }
+        el.$stop=stop;
+        console.log("stop",stop)
+        //标记事件
+        let startFn=fnStartParams(baseInfo);
+        let moveFn=fnMoveParams(baseInfo);
+        let endFn=fnEndParams('doms',baseInfo,{},callback,el);
+        if (isMobile()) {
+            el.addEventListener("touchstart",startFn, false);
+            el.addEventListener('touchmove', moveFn, false);
+            el.addEventListener('touchend', endFn, false);
+        }
+        else {
+            el.addEventListener("mousedown",startFn,false )
+            el.addEventListener("mousemove", moveFn, false);
+            el.addEventListener("mouseup", endFn, false);
+        }
+    },
+    unbind() {
+
     }
 }
 /**
