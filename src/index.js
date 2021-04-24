@@ -38,12 +38,22 @@ export const isMobile = () => {
         return false;
     }
 }
-// 派发自定义事件
-const dispatch = function (event, data) {
+/**
+ *  派发自定义事件
+ * @param {Event} event 
+ * @param {*} data 
+ * @param {Window or Document} target 
+ */
+const dispatch = function (event, data,target=null) {
     event.data = {
         data
     };
-    window.dispatchEvent(event);
+    if(!target){
+        window.dispatchEvent(event);
+    }
+    else if(target.nodeType==1&&typeof target['dispatchEvent']=="function"){
+        target['dispatchEvent'](event);
+    }
 }
 //事件兼容处理
 function eventFix(event){
@@ -56,13 +66,14 @@ function eventFix(event){
     return touch;
 }
 /**
- * 初始化适配事件
- * @param {*} AdaptEventName addEventLister name
- * @param {*} el  dom
+ * 注册事件，并且返回
+ * @param {*} eventName 
+ * @returns 
  */
-const AdaptEvent = function (AdaptEventName, el) {
-    el.$adaptEvent = document.createEvent('HTMLEvents');
-    el.$adaptEvent.initEvent(AdaptEventName, false, true);
+function createEvent(eventName){
+    let e = document.createEvent('HTMLEvents');
+    e.initEvent(eventName, false, true);
+    return  e;
 }
 //鼠标点下
 function fnStartParams(obj={}){
@@ -171,7 +182,7 @@ export const directive = {
         if(!triggerTime){
             triggerTime=1000;
         }
-        AdaptEvent(AdaptEventName, el);
+        el.$adaptEvent=createEvent(AdaptEventName);
         let eventFunc = function () {
             let clientWidth = window.innerWidth;
             let clientHeight = window.innerHeight;
@@ -220,15 +231,14 @@ export const directive = {
         el.$hsAdapted = false;
         el.fn = eventFunTime;
         eventFunc();
-        window.addEventListener('resize', () => {
-            window.removeEventListener('resize', el.fn);
-            window.addEventListener('resize', el.fn, false);
-        }, false);
         if ("onorientationchange" in window) {
             window.removeEventListener('orientationchange', el.fn);
             window.addEventListener('orientationchange', el.fn, false);
         }
-        
+        else{
+            window.removeEventListener('resize', eventFunc);
+            window.addEventListener('resize', eventFunc, false);
+        }
     },
     unbind(el) {
         window.removeEventListener('resize', el.fn, false);
@@ -251,14 +261,10 @@ export const event = (obj = { distance: 50, pre: '' }) => {
         distance
     }
     //标记事件
-    let swipeLeft = document.createEvent('HTMLEvents');
-    swipeLeft.initEvent(`${pre}swipeLeft`, false, true);
-    let swipeRight = document.createEvent('HTMLEvents');
-    swipeRight.initEvent(`${pre}swipeRight`, false, true);
-    let swipeTop = document.createEvent('HTMLEvents');
-    swipeTop.initEvent(`${pre}swipeTop`, false, true);
-    let swipeBottom = document.createEvent('HTMLEvents');
-    swipeBottom.initEvent(`${pre}swipeBottom`, false, true);
+    let swipeLeft = createEvent(`${pre}swipeLeft`);
+    let swipeRight = createEvent(`${pre}swipeRight`);
+    let swipeTop = createEvent(`${pre}swipeTop`);
+    let swipeBottom = createEvent(`${pre}swipeBottom`);
     let eventMaps={swipeLeft,swipeRight,swipeTop,swipeBottom};
     if (isMobile()) {
         window.addEventListener("touchstart",fnStartParams(baseInfo), false);

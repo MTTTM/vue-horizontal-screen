@@ -37,7 +37,7 @@ export default {
     // });
     window.addEventListener("hsAdapt", (obj) => {
       this.adapted = obj.data.data;
-      //console.log("hsAdapt", obj.data.data);
+      console.log("hsAdapt", obj.data.data);
       //alert("22");
     });
     window.addEventListener("swipeLeft", function (obj) {
@@ -77,7 +77,7 @@ body,
   width: 100%;
   height: 100%;
   overflow: hidden;
-  //touch-action: none;
+  touch-action: none; /**disabled browser native event */
 }
 @function px($num) {
   @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
