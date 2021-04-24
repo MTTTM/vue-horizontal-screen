@@ -73,13 +73,13 @@ export default {
         console.log("swipeRight");
         this.domSwipe = "swipeRight";
       }
-      if (type == "swipeBottom" && dis >= 5) {
-        console.log("swipeBottom");
-        this.domSwipe = "swipeBottom";
-      } else if (type == "swipeTop" && dis >= 5) {
-        console.log("swipeTop");
-        this.domSwipe = "swipeTop";
-      }
+      // if (type == "swipeBottom" && dis >= 5) {
+      //   console.log("swipeBottom");
+      //   this.domSwipe = "swipeBottom";
+      // } else if (type == "swipeTop" && dis >= 5) {
+      //   console.log("swipeTop");
+      //   this.domSwipe = "swipeTop";
+      // }
     },
   },
 };

@@ -144,11 +144,11 @@ export default {
       } else if (type == "swipeRight" && dis >= 20) {
         console.log("swipeRight");
       }
-      if (type == "swipeBottom" && dis >= 5) {
-        console.log("swipeBottom");
-      } else if (type == "swipeTop" && dis >= 5) {
-        console.log("swipeTop");
-      }
+      // if (type == "swipeBottom" && dis >= 5) {
+      //   console.log("swipeBottom");
+      // } else if (type == "swipeTop" && dis >= 5) {
+      //   console.log("swipeTop");
+      // }
     }
   }
 };
