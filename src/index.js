@@ -281,7 +281,6 @@ export const directiveForDom = {
         }
         el.$stop=stop;
         el.$prevent=prevent;
-        console.log("el.$prevent",el.$prevent)
         //标记事件
         let startFn=fnStartParams(baseInfo,el);
         let moveFn=fnMoveParams(baseInfo,el);
