@@ -8,8 +8,7 @@
           <div class="right">50</div>
         </div>
         <div class="main">
-          <p>Try swipe！Let's do it!!</p>
-          <div v-hs-swipe.stop="hsSwipe" class="dom-event">
+          <div v-hs-swipe.stop.prevent="hsSwipe" class="dom-event">
             <p>Red block is Dom Swipe area.</p>
             <h3>swipe type:{{ domSwipe }}</h3>
           </div>

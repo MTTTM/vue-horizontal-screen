@@ -75,14 +75,27 @@ function eventFix(event){
     }
     return touch;
 }
-
+//阻止默认事件
+function preventDefault(el,ev){
+    if(el&&el.$prevent){
+        ev.preventDefault();
+    }
+}
+//阻止事件传播
+function stopPropagation(el,ev){
+    if(el&&el.$stop){
+        ev.stopPropagation();
+     }
+}
 /**
  * 鼠标按下
  * @param {*} obj 
  * @returns {Function}
  */
-function fnStartParams(obj={}){
+function fnStartParams(obj={},el){
     return function(ev){
+        stopPropagation(el,ev);
+        preventDefault(el,ev);
          var touch=eventFix(ev);
          obj.startX = touch.clientX;
          obj.startY = touch.clientY;
@@ -96,8 +109,10 @@ function fnStartParams(obj={}){
  * @param {*} obj 
  * @returns {Function}
  */
- function fnMoveParams(obj={}){
+ function fnMoveParams(obj={},el){
      return function(ev){
+        stopPropagation(el,ev);
+        preventDefault(el,ev);
          var touch=eventFix(ev);
          let curX = touch.clientX;
          let curY = touch.clientY;
@@ -132,9 +147,9 @@ function fnStartParams(obj={}){
      return function(ev){
          let dir = getDir();//1=>横屏 0=>竖屏
          let {disY,disc,disX}=baseInfo;
-         if(el&&el.$stop){
-            ev.stopPropagation();
-         }
+         
+         stopPropagation(el,ev);
+         preventDefault(el,ev);
          if (dir == 1||!isMobile()) {
              if (disY < 0 && disY < Number(-disc)) {
                 swipes[callbackType]("swipeTop",{ dis: Math.abs(disY),type:"swipeTop" });
@@ -257,7 +272,7 @@ export const directive = {
 export const directiveForDom = {
     bind: function (el, binding) {
         let callback= binding.value;
-        let {stop}=binding.modifiers;
+        let {stop,prevent}=binding.modifiers;
         let baseInfo={
             startX:0,
             startY:0,
@@ -265,9 +280,11 @@ export const directiveForDom = {
             distance:1
         }
         el.$stop=stop;
+        el.$prevent=prevent;
+        console.log("el.$prevent",el.$prevent)
         //标记事件
-        let startFn=fnStartParams(baseInfo);
-        let moveFn=fnMoveParams(baseInfo);
+        let startFn=fnStartParams(baseInfo,el);
+        let moveFn=fnMoveParams(baseInfo,el);
         let endFn=fnEndParams('doms',baseInfo,{},callback,el);
         if (isMobile()) {
             el.addEventListener("touchstart",startFn, false);

@@ -24,8 +24,9 @@ npm install vue-horizontal-screen
 
 ### directiveForDom
 
-- Bind events to nodes
-- Modifier:`.stop` event.stopPropagation(),When you use it, window events will not be triggered by this node
+- Bind events to document nodes
+- Modifier:`.stop` event.stopPropagation()
+- Modifier: `.prevent` event.preventDefault()
 
 ### params of event
 
