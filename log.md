@@ -1,3 +1,7 @@
+# V 0.1.10
+- forbidden to call the event function multiple times
+- Repair directive unbinding does not release the resize event listener
+
 # V 0.1.7
 
 - remove param disabledresized of Directive
