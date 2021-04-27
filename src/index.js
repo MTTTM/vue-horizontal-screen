@@ -181,6 +181,103 @@ function fnStartParams(obj={},el){
          }
      }
  }
+
+ let AdaptEventlistnerHandler;
+ let AdaptEventlistnerDelayHandler;
+ let adptDelayTimer;
+ let eventIsInited=false;
+ /**
+  * 
+  * @param {*} obj 
+  * @param {*} isAddEvent  is it ready for addEventlistner
+  * @param {*} callbackByUser is it ready for User
+  * @returns 
+  */
+function AdaptFunc(obj,isAddEventListner=false,callbackByUser=false) {
+    let {oneTimesWidth,el,cssVar,oneTimesHeight}=obj;
+    let tmpFunc=function(){
+        let clientWidth = window.innerWidth;
+        let clientHeight = window.innerHeight;
+        let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
+        let percent = maxWidth / oneTimesWidth;
+        let isPc = !isMobile();
+        
+        //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
+        if (getDir() == 1 || isPc) {
+            if (percent * oneTimesHeight > clientHeight) {
+                percent = clientHeight / oneTimesHeight;
+            }
+        }
+        else {
+            if (percent * oneTimesHeight > clientWidth) {
+                percent = clientWidth / oneTimesHeight;
+            }
+        }
+            document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+            //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
+            if ( (window.orientation == null 
+                || window.orientation === 180 
+                || window.orientation === 0
+                )&&!isPc) {//竖屏状态
+                el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
+                el.style.width = `${clientHeight}px`;
+                el.style.height = `${clientWidth}px`;
+                el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
+                //如果已经处于横屏状态就不做其他处理了
+            } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
+                el.style.webkitTransform = el.style.transform = `rotate(0)`;
+                el.style.width = `${clientWidth}px`;
+                el.style.height = `${clientHeight}px`;
+            }
+            
+            el.$hsAdapted = true;//已适配
+            dispatch(el.$adaptEvent, el.$hsAdapted);
+    }
+    if(isAddEventListner){
+        if(!callbackByUser){
+            AdaptEventlistnerHandler=tmpFunc;
+            return AdaptEventlistnerHandler;
+        }
+        else{
+            return tmpFunc;
+        }
+    }
+    else{
+        tmpFunc();
+    }
+    
+}
+ /**
+  * @param {*} obj 
+  * @param {*} isAddEventListner  is it ready for addEventlistner
+  * @param {*} callbackByUser is it ready for User
+  * @returns 
+  */
+function AdaptDelayFunc(obj,isAddEventListner=false,callbackByUser=false){
+    let {triggerTime}=obj;
+    clearTimeout(adptDelayTimer);
+    let tmpFunc=function(){
+        adptDelayTimer = setTimeout(() => {
+             AdaptFunc(obj);
+        }, triggerTime);
+    }
+    if(isAddEventListner){
+        if(!callbackByUser){
+            AdaptEventlistnerDelayHandler=tmpFunc;
+            return AdaptEventlistnerDelayHandler;
+        }
+        else{
+            return tmpFunc;
+        }
+       
+    }
+    else{
+        tmpFunc();
+    }
+    
+}
+
+
 export const directive = {
     bind: function (el, binding) {
         let { cssVar,
@@ -206,67 +303,68 @@ export const directive = {
             triggerTime=1000;
         }
         el.$adaptEvent=createEvent(AdaptEventName);
-        let eventFunc = function () {
-            let clientWidth = window.innerWidth;
-            let clientHeight = window.innerHeight;
-            let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
-            let percent = maxWidth / oneTimesWidth;
-            let isPc = !isMobile();
-            //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
-            if (getDir() == 1 || isPc) {
-                if (percent * oneTimesHeight > clientHeight) {
-                    percent = clientHeight / oneTimesHeight;
-                }
-            }
-            else {
-                if (percent * oneTimesHeight > clientWidth) {
-                    percent = clientWidth / oneTimesHeight;
-                }
-            }
-            document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
-            //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
-            if ( (window.orientation == null 
-                || window.orientation === 180 
-                || window.orientation === 0
-                )&&!isPc) {//竖屏状态
-                el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
-                el.style.width = `${clientHeight}px`;
-                el.style.height = `${clientWidth}px`;
-                el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
-                //如果已经处于横屏状态就不做其他处理了
-            } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
-                el.style.webkitTransform = el.style.transform = `rotate(0)`;
-                el.style.width = `${clientWidth}px`;
-                el.style.height = `${clientHeight}px`;
-            }
+        // let eventFunc = function () {
+        //     let clientWidth = window.innerWidth;
+        //     let clientHeight = window.innerHeight;
+        //     let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
+        //     let percent = maxWidth / oneTimesWidth;
+        //     let isPc = !isMobile();
+        //     //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
+        //     if (getDir() == 1 || isPc) {
+        //         if (percent * oneTimesHeight > clientHeight) {
+        //             percent = clientHeight / oneTimesHeight;
+        //         }
+        //     }
+        //     else {
+        //         if (percent * oneTimesHeight > clientWidth) {
+        //             percent = clientWidth / oneTimesHeight;
+        //         }
+        //     }
+        //     document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+        //     //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
+        //     if ( (window.orientation == null 
+        //         || window.orientation === 180 
+        //         || window.orientation === 0
+        //         )&&!isPc) {//竖屏状态
+        //         el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
+        //         el.style.width = `${clientHeight}px`;
+        //         el.style.height = `${clientWidth}px`;
+        //         el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
+        //         //如果已经处于横屏状态就不做其他处理了
+        //     } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
+        //         el.style.webkitTransform = el.style.transform = `rotate(0)`;
+        //         el.style.width = `${clientWidth}px`;
+        //         el.style.height = `${clientHeight}px`;
+        //     }
             
-            el.$hsAdapted = true;//已适配
-            dispatch(el.$adaptEvent, el.$hsAdapted);
-        }
-        let timer;
-        let eventFunTime = function () {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                eventFunc();
-            }, triggerTime);
-        }
-        el.$hsLayout = eventFunc;
+        //     el.$hsAdapted = true;//已适配
+        //     dispatch(el.$adaptEvent, el.$hsAdapted);
+        // }
+
+       // let timer;
+        let scopeInfo={oneTimesWidth,el,cssVar,triggerTime,oneTimesHeight};
+       // AdaptFunc(scopeInfo);
+        // let eventFunTime = function () {
+        //     clearTimeout(timer);
+        //     timer = setTimeout(() => {
+        //         eventFunc();
+        //     }, triggerTime);
+        // }
+        el.$hsLayout = AdaptFunc(scopeInfo,true,true);
         el.$hsAdapted = false;
-        el.fn = eventFunTime;
-        el.fnNoDelay=eventFunc;
-        eventFunc();
+       AdaptFunc(scopeInfo);//马上执行
         if ("onorientationchange" in window) {
-            window.removeEventListener('orientationchange', el.fn);
-            window.addEventListener('orientationchange', el.fn, false);
+            window.removeEventListener('orientationchange', AdaptEventlistnerDelayHandler);
+            window.addEventListener('orientationchange', AdaptDelayFunc(scopeInfo,true), false);
         }
         else{
-            window.removeEventListener('resize', el.fnNoDelay);
-            window.addEventListener('resize', el.fnNoDelay, false);
+            window.removeEventListener('resize', AdaptEventlistnerHandler);
+            window.addEventListener('resize', AdaptFunc(scopeInfo,true), false);
         }
     },
     unbind(el) {
-        window.removeEventListener('resize', el.fnNoDelay, false);
-        window.removeEventListener('orientationchange', el.fn, false);
+        window.removeEventListener('resize', AdaptEventlistnerHandler, false);
+        window.removeEventListener('orientationchange', AdaptEventlistnerDelayHandler, false);
         el.$hsLayout = null;
     }
 }
@@ -308,6 +406,7 @@ export const directiveForDom = {
  * @description distance  事件距离，默认50
  */
 export const event = (obj = { distance: 50, pre: '' }) => {
+    if(eventIsInited){return;}
     let { pre, distance } = obj;
     let baseInfo={
         startX:0,
@@ -331,5 +430,6 @@ export const event = (obj = { distance: 50, pre: '' }) => {
         window.addEventListener("mousemove", fnMoveParams(baseInfo), false);
         window.addEventListener("mouseup", fnEndParams('win',baseInfo,eventMaps), false);
     }
+    eventIsInited=true;
 }
 

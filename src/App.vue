@@ -45,7 +45,7 @@ export default {
   },
   beforeDestroy() {
     /*don't forget to remove eventlistener!!*/
-    window.removeEventListener("hsAdapt", this.swipeCallback);
+    //  window.removeEventListener("hsAdapt", this.swipeCallback);
     window.removeEventListener("swipeLeft", this.swipeCallback);
     window.removeEventListener("swipeRight", this.swipeCallback);
     window.removeEventListener("swipeTop", this.swipeCallback);
