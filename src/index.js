@@ -296,11 +296,9 @@ export const directiveForDom = {
             el.addEventListener("mousemove", moveFn, false);
             el.addEventListener("mouseup", endFn, false);
         }
-    },
-    unbind() {
-
     }
 }
+let eventInited=false;
 /**
  * 
  * @param {Object} obj
@@ -308,6 +306,7 @@ export const directiveForDom = {
  * @description distance  事件距离，默认50
  */
 export const event = (obj = { distance: 50, pre: '' }) => {
+    if(eventInited){return;}
     let { pre, distance } = obj;
     let baseInfo={
         startX:0,
@@ -331,5 +330,6 @@ export const event = (obj = { distance: 50, pre: '' }) => {
         window.addEventListener("mousemove", fnMoveParams(baseInfo), false);
         window.addEventListener("mouseup", fnEndParams('win',baseInfo,eventMaps), false);
     }
+    eventInited=true;
 }
 
