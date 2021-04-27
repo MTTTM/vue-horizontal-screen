@@ -253,18 +253,19 @@ export const directive = {
         el.$hsLayout = eventFunc;
         el.$hsAdapted = false;
         el.fn = eventFunTime;
+        el.fnNoDelay=eventFunc;
         eventFunc();
         if ("onorientationchange" in window) {
             window.removeEventListener('orientationchange', el.fn);
             window.addEventListener('orientationchange', el.fn, false);
         }
         else{
-            window.removeEventListener('resize', eventFunc);
-            window.addEventListener('resize', eventFunc, false);
+            window.removeEventListener('resize', el.fnNoDelay);
+            window.addEventListener('resize', el.fnNoDelay, false);
         }
     },
     unbind(el) {
-        window.removeEventListener('resize', el.fn, false);
+        window.removeEventListener('resize', el.fnNoDelay, false);
         window.removeEventListener('orientationchange', el.fn, false);
         el.$hsLayout = null;
     }
