@@ -22,7 +22,7 @@ npm install vue-horizontal-screen
 | times          | Design draft multiple                                                    | --       | TRUE     |
 | triggerTime    | Time to trigger adaptation after window change(no work on computer side) | 1000     | FALSE    |
 | AdaptEventName | Adaptation status Event                                                  | hsAdapt  | FALSE    |
-| setWrapAttr    | Set the width and height of the container                                | TRUE     | TRUE     |
+| setWrapAttr    | Set the width and height of the container                                | TRUE     | FALSE    |
 
 ### directiveForDom
 
