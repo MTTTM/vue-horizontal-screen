@@ -32,6 +32,7 @@ export default {
         times: 3,
         disabledresized: false, //removed after v0.1.7
         AdaptEventName: "", //Monitor adaptation status events，default is hsAdapt
+        setWrapAttr: false,
       },
       domSwipe: "--",
     };
@@ -43,7 +44,7 @@ export default {
     window.addEventListener("swipeTop", this.swipeCallback);
     window.addEventListener("swipeBottom", this.swipeCallback);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     /*don't forget to remove eventlistener!!*/
     window.removeEventListener("hsAdapt", this.swipeCallback);
     window.removeEventListener("swipeLeft", this.swipeCallback);

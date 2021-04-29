@@ -1,4 +1,10 @@
+# V 0.1.11
+
+- suppert vue3
+- Add attributes setWrapAttr
+
 # V 0.1.10
+
 - forbidden to call the event function multiple times
 - Repair directive unbinding does not release the resize event listener
 

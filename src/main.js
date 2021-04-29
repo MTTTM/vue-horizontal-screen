@@ -1,12 +1,12 @@
-import Vue from 'vue'
+
 import App from './App.vue'
+import { createApp } from 'vue'
+const app = createApp(App)
+
 import {directive,event,directiveForDom} from "./index.js"
 //import {directive,event,directiveForDom} from "vue-horizontal-screen"
 
-Vue.config.productionTip = false
-Vue.directive('horizontal-screen', {...directive});
-Vue.directive('hs-swipe', {...directiveForDom});
-event();//  addEventListener
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+app.directive('horizontal-screen', {...directive});
+app.directive('hs-swipe', {...directiveForDom});
+event();
+app.mount('#app');

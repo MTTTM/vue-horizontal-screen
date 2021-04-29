@@ -181,122 +181,136 @@ function fnStartParams(obj={},el){
          }
      }
  }
-export const directive = {
-    bind: function (el, binding) {
-        let { cssVar,
-            width,
-            height,
-            times,
-            triggerTime,
-            AdaptEventName
-        } = binding.value;
-        if (!times) {
-            times = 1;
-            console.warn("times is required!!");
-        }
-        let oneTimesWidth = width / times;
-        let oneTimesHeight = height / times;
-        if (!cssVar) {
-            cssVar = "hs-var";
-        }
-        if (!AdaptEventName) {
-            AdaptEventName = "hsAdapt";
-        }
-        if(!triggerTime){
-            triggerTime=1000;
-        }
-        el.$adaptEvent=createEvent(AdaptEventName);
-        let eventFunc = function () {
-            let clientWidth = window.innerWidth;
-            let clientHeight = window.innerHeight;
-            let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
-            let percent = maxWidth / oneTimesWidth;
-            let isPc = !isMobile();
-            //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
-            if (getDir() == 1 || isPc) {
-                if (percent * oneTimesHeight > clientHeight) {
-                    percent = clientHeight / oneTimesHeight;
-                }
+
+ function directiveBindfunction (el, binding) {
+    let { cssVar,
+        width,
+        height,
+        times,
+        triggerTime,
+        AdaptEventName,
+        setWrapAttr
+    } = binding.value;
+    if (!times) {
+        times = 1;
+        console.warn("times is required!!");
+    }
+    let oneTimesWidth = width / times;
+    let oneTimesHeight = height / times;
+    if (!cssVar) {
+        cssVar = "hs-var";
+    }
+    if (!AdaptEventName) {
+        AdaptEventName = "hsAdapt";
+    }
+    if(!triggerTime){
+        triggerTime=1000;
+    }
+    let adaptEvent=createEvent(AdaptEventName);
+    let eventFunc = function () {
+        let clientWidth = window.innerWidth;
+        let clientHeight = window.innerHeight;
+        let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
+        let percent = maxWidth / oneTimesWidth;
+        let isPc = !isMobile();
+        //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
+        if (getDir() == 1 || isPc) {
+            if (percent * oneTimesHeight > clientHeight) {
+                percent = clientHeight / oneTimesHeight;
             }
-            else {
-                if (percent * oneTimesHeight > clientWidth) {
-                    percent = clientWidth / oneTimesHeight;
-                }
+        }
+        else {
+            if (percent * oneTimesHeight > clientWidth) {
+                percent = clientWidth / oneTimesHeight;
             }
-            document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
-            //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
-            if ( (window.orientation == null 
-                || window.orientation === 180 
-                || window.orientation === 0
-                )&&!isPc) {//竖屏状态
-                el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
+        }
+        document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+        //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
+        if ( (window.orientation == null 
+            || window.orientation === 180 
+            || window.orientation === 0
+            )&&!isPc) {//竖屏状态
+            el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
+            el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
+            if(setWrapAttr){
                 el.style.width = `${clientHeight}px`;
-                el.style.height = `${clientWidth}px`;
-                el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
-                //如果已经处于横屏状态就不做其他处理了
-            } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
-                el.style.webkitTransform = el.style.transform = `rotate(0)`;
+               el.style.height = `${clientWidth}px`;
+            }
+            //如果已经处于横屏状态就不做其他处理了
+        } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
+            el.style.webkitTransform = el.style.transform = `rotate(0)`;
+            if(setWrapAttr){
                 el.style.width = `${clientWidth}px`;
                 el.style.height = `${clientHeight}px`;
             }
-            
-            el.$hsAdapted = true;//已适配
-            dispatch(el.$adaptEvent, el.$hsAdapted);
         }
-        let timer;
-        let eventFunTime = function () {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                eventFunc();
-            }, triggerTime);
-        }
-        el.$hsLayout = eventFunc;
-        el.$hsAdapted = false;
-        el.fn = eventFunTime;
-        el.fnNoDelay=eventFunc;
-        eventFunc();
-        if ("onorientationchange" in window) {
-            window.removeEventListener('orientationchange', el.fn);
-            window.addEventListener('orientationchange', el.fn, false);
-        }
-        else{
-            window.removeEventListener('resize', el.fnNoDelay);
-            window.addEventListener('resize', el.fnNoDelay, false);
-        }
-    },
-    unbind(el) {
-        window.removeEventListener('resize', el.fnNoDelay, false);
-        window.removeEventListener('orientationchange', el.fn, false);
-        el.$hsLayout = null;
+        
+        el.$hsAdapted = true;//已适配
+        dispatch(adaptEvent, el.$hsAdapted);
+    }
+    let timer;
+    let eventFunTime = function () {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            eventFunc();
+        }, triggerTime);
+    }
+    el.$hsLayout = eventFunc;
+    el.$hsAdapted = false;
+    el.fn = eventFunTime;
+    el.fnNoDelay=eventFunc;
+    eventFunc();
+    if ("onorientationchange" in window) {
+        window.removeEventListener('orientationchange', el.fn);
+        window.addEventListener('orientationchange', el.fn, false);
+    }
+    else{
+        window.removeEventListener('resize', el.fnNoDelay);
+        window.addEventListener('resize', el.fnNoDelay, false);
     }
 }
-export const directiveForDom = {
-    bind: function (el, binding) {
-        let callback= binding.value;
-        let {stop,prevent}=binding.modifiers;
-        let baseInfo={
-            startX:0,
-            startY:0,
-            disX:0,
-            distance:1
-        }
-        el.$stop=stop;
-        el.$prevent=prevent;
-        //标记事件
-        let startFn=fnStartParams(baseInfo,el);
-        let moveFn=fnMoveParams(baseInfo,el);
-        let endFn=fnEndParams('doms',baseInfo,{},callback,el);
-        if (isMobile()) {
-            el.addEventListener("touchstart",startFn, false);
-            el.addEventListener('touchmove', moveFn, false);
-            el.addEventListener('touchend', endFn, false);
-        }
-        else {
-            el.addEventListener("mousedown",startFn,false )
-            el.addEventListener("mousemove", moveFn, false);
-            el.addEventListener("mouseup", endFn, false);
-        }
+function directiveUnBind(el) {
+    window.removeEventListener('resize', el.fnNoDelay, false);
+    window.removeEventListener('orientationchange', el.fn, false);
+    el.$hsLayout = null;
+}
+function directiveForDomfunction (el, binding) {
+    let callback= binding.value;
+    let {stop,prevent}=binding.modifiers;
+    let baseInfo={
+        startX:0,
+        startY:0,
+        disX:0,
+        distance:1
     }
+    el.$stop=stop;
+    el.$prevent=prevent;
+    //标记事件
+    let startFn=fnStartParams(baseInfo,el);
+    let moveFn=fnMoveParams(baseInfo,el);
+    let endFn=fnEndParams('doms',baseInfo,{},callback,el);
+    if (isMobile()) {
+        el.addEventListener("touchstart",startFn, false);
+        el.addEventListener('touchmove', moveFn, false);
+        el.addEventListener('touchend', endFn, false);
+    }
+    else {
+        el.addEventListener("mousedown",startFn,false )
+        el.addEventListener("mousemove", moveFn, false);
+        el.addEventListener("mouseup", endFn, false);
+    }
+}
+
+export const directive = {
+    bind: directiveBindfunction,
+    unbind:directiveUnBind,
+    beforeMount: directiveBindfunction,
+    unmounted:directiveUnBind
+}
+export const directiveForDom = {
+    bind: directiveForDomfunction,
+    beforeMount: directiveForDomfunction,
+
 }
 let eventInited=false;
 /**
