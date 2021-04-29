@@ -251,14 +251,13 @@ function hsLayoutFunc(obj={}) {
     let adaptEvent=createEvent(AdaptEventName);
     var baseInfo={oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent};
     let timer;
-    let eventFunc=()=>{hsLayoutFunc(baseInfo)};
-    el.$hsLayout = eventFunc;
+    el.$hsLayout = ()=>{hsLayoutFunc(baseInfo)};
     el.$delayLayout = function () {
         clearTimeout(timer);
         timer = setTimeout(() =>hsLayoutFunc(baseInfo), triggerTime);
     };
     el.$hsAdapted = false;
-    eventFunc();
+    el.$hsLayout();
     if ("onorientationchange" in window) {
         window.removeEventListener('orientationchange',el.$delayLayout);
         window.addEventListener('orientationchange',el.$delayLayout, false);
