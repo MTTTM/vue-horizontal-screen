@@ -145,11 +145,10 @@ function fnStartParams(obj={},el){
          },
      }
      return function(ev){
+        stopPropagation(el,ev);
+        preventDefault(el,ev);
          let dir = getDir();//1=>横屏 0=>竖屏
          let {disY,disc,disX}=baseInfo;
-         
-         stopPropagation(el,ev);
-         preventDefault(el,ev);
          if (dir == 1||!isMobile()) {
              if (disY < 0 && disY < Number(-disc)) {
                 swipes[callbackType]("swipeTop",{ dis: Math.abs(disY),type:"swipeTop" });
