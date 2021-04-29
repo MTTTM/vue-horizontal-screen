@@ -4,6 +4,7 @@
 
 - It provides horizontal web page layout and events.[online](https://2gt9f.csb.app/)
 - Support computer(Version 0.1.3 or greater)
+- Support V3(Version 0.1.11 or greater)
 
 ## Start
 
