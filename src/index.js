@@ -304,12 +304,12 @@ function directiveForDomfunction (el, binding) {
 export const directive = {
     bind: directiveBindfunction,
     unbind:directiveUnBind,
-    beforeMount: directiveBindfunction,
-    unmounted:directiveUnBind
+    beforeMount: directiveBindfunction,//v3
+    unmounted:directiveUnBind//v3
 }
 export const directiveForDom = {
     bind: directiveForDomfunction,
-    beforeMount: directiveForDomfunction,
+    beforeMount: directiveForDomfunction,//v3
 
 }
 let eventInited=false;
