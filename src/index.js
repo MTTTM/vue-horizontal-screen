@@ -206,6 +206,10 @@ function fnStartParams(obj={},el){
     if(!triggerTime){
         triggerTime=1000;
     }
+    let bool='setWrapAttr' in binding.value;
+    if(!bool){
+        setWrapAttr=true;
+    }
     let adaptEvent=createEvent(AdaptEventName);
     let eventFunc = function () {
         let clientWidth = window.innerWidth;

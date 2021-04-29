@@ -32,7 +32,7 @@ export default {
         times: 3,
         disabledresized: false, //removed after v0.1.7
         AdaptEventName: "", //Monitor adaptation status events，default is hsAdapt
-        setWrapAttr: false,
+        //setWrapAttr: false,
       },
       domSwipe: "--",
     };
@@ -108,6 +108,8 @@ body,
   align-items: center;
   background: #fff;
   word-wrap: break-word;
+  width: 100%;
+  height: 100%;
 }
 #wrap {
   width: px(667 * 3);
