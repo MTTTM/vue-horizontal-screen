@@ -181,16 +181,54 @@ function fnStartParams(obj={},el){
          }
      }
  }
-
+/**
+ * 界面适配
+ * @param {*} obj 
+ */
+function hsLayoutFunc(obj={}) {
+    let {oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent}=obj;
+    let clientWidth = window.innerWidth;
+    let clientHeight = window.innerHeight;
+    let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
+    let percent = maxWidth / oneTimesWidth;
+    let isPc = !isMobile();
+    //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
+    if (getDir() == 1 || isPc) {
+        if (percent * oneTimesHeight > clientHeight) {
+            percent = clientHeight / oneTimesHeight;
+        }
+    }
+    else {
+        if (percent * oneTimesHeight > clientWidth) {
+            percent = clientWidth / oneTimesHeight;
+        }
+    }
+    document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+    //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
+    if ( (window.orientation == null 
+        || window.orientation === 180 
+        || window.orientation === 0
+        )&&!isPc) {//竖屏状态
+        el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
+        el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
+        if(setWrapAttr){
+            el.style.width = `${clientHeight}px`;
+           el.style.height = `${clientWidth}px`;
+        }
+        //如果已经处于横屏状态就不做其他处理了
+    } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
+        el.style.webkitTransform = el.style.transform = `rotate(0)`;
+        if(setWrapAttr){
+            el.style.width = `${clientWidth}px`;
+            el.style.height = `${clientHeight}px`;
+        }
+    }
+    
+    el.$hsAdapted = true;//已适配
+    dispatch(adaptEvent, el.$hsAdapted);
+}
  function directiveBindfunction (el, binding) {
-    let { cssVar,
-        width,
-        height,
-        times,
-        triggerTime,
-        AdaptEventName,
-        setWrapAttr
-    } = binding.value;
+    let { cssVar,width,height,times,triggerTime,AdaptEventName,setWrapAttr} = binding.value;
     if (!times) {
         times = 1;
         console.warn("times is required!!");
@@ -211,71 +249,29 @@ function fnStartParams(obj={},el){
         setWrapAttr=true;
     }
     let adaptEvent=createEvent(AdaptEventName);
-    let eventFunc = function () {
-        let clientWidth = window.innerWidth;
-        let clientHeight = window.innerHeight;
-        let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
-        let percent = maxWidth / oneTimesWidth;
-        let isPc = !isMobile();
-        //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
-        if (getDir() == 1 || isPc) {
-            if (percent * oneTimesHeight > clientHeight) {
-                percent = clientHeight / oneTimesHeight;
-            }
-        }
-        else {
-            if (percent * oneTimesHeight > clientWidth) {
-                percent = clientWidth / oneTimesHeight;
-            }
-        }
-        document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
-        //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
-        if ( (window.orientation == null 
-            || window.orientation === 180 
-            || window.orientation === 0
-            )&&!isPc) {//竖屏状态
-            el.style.webkitTransform = el.style.transform = `rotate(90deg)`;
-            el.style.webkitTransformOrigin = el.style.transformOrigin = `${clientWidth / 2}px center`;
-            if(setWrapAttr){
-                el.style.width = `${clientHeight}px`;
-               el.style.height = `${clientWidth}px`;
-            }
-            //如果已经处于横屏状态就不做其他处理了
-        } else if ((window.orientation === 90 ||window.orientation === -90)||isPc) {//横屏状态||pc
-            el.style.webkitTransform = el.style.transform = `rotate(0)`;
-            if(setWrapAttr){
-                el.style.width = `${clientWidth}px`;
-                el.style.height = `${clientHeight}px`;
-            }
-        }
-        
-        el.$hsAdapted = true;//已适配
-        dispatch(adaptEvent, el.$hsAdapted);
-    }
+    var baseInfo={oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent};
     let timer;
-    let eventFunTime = function () {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-            eventFunc();
-        }, triggerTime);
-    }
+    let eventFunc=()=>{hsLayoutFunc(baseInfo)};
     el.$hsLayout = eventFunc;
+    el.$delayLayout = function () {
+        clearTimeout(timer);
+        timer = setTimeout(() =>hsLayoutFunc(baseInfo), triggerTime);
+    };
     el.$hsAdapted = false;
-    el.fn = eventFunTime;
-    el.fnNoDelay=eventFunc;
     eventFunc();
     if ("onorientationchange" in window) {
-        window.removeEventListener('orientationchange', el.fn);
-        window.addEventListener('orientationchange', el.fn, false);
+        window.removeEventListener('orientationchange',el.$delayLayout);
+        window.addEventListener('orientationchange',el.$delayLayout, false);
     }
     else{
-        window.removeEventListener('resize', el.fnNoDelay);
-        window.addEventListener('resize', el.fnNoDelay, false);
+        window.removeEventListener('resize',  el.$hsLayout);
+        window.addEventListener('resize',  el.$hsLayout, false);
     }
 }
 function directiveUnBind(el) {
-    window.removeEventListener('resize', el.fnNoDelay, false);
-    window.removeEventListener('orientationchange', el.fn, false);
+    /**这谷歌浏览器调试监听工具有bug，如果销毁了一个绑定适配指令的节点，但是看到监听器没有解除，可以关掉调试面板再打开调试面板就可以看到了*/
+    window.removeEventListener('resize',  el.$hsLayout);
+    window.removeEventListener('orientationchange',el.$delayLayout);
     el.$hsLayout = null;
 }
 function directiveForDomfunction (el, binding) {

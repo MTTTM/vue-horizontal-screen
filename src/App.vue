@@ -1,5 +1,28 @@
 <template>
   <div id="app" @click="reset">
+    <div
+      v-horizontal-screen="obj"
+      class="box"
+      ref="hscreen"
+      v-if="show2"
+      @click="show2 = false"
+    >
+      <div id="wrap">
+        <div class="header">
+          <div class="left">25</div>
+          <div class="mid">40</div>
+          <div class="right">50</div>
+        </div>
+        <div class="main">
+          <div v-hs-swipe.stop.prevent="hsSwipe" class="dom-event">
+            <p>Red block is Dom Swipe area.</p>
+            <h3>swipe type:{{ domSwipe }}</h3>
+          </div>
+          <p>window swipe area</p>
+        </div>
+        <div class="footer"></div>
+      </div>
+    </div>
     <div v-horizontal-screen="obj" class="box" ref="hscreen">
       <div id="wrap">
         <div class="header">
@@ -32,9 +55,10 @@ export default {
         times: 3,
         disabledresized: false, //removed after v0.1.7
         AdaptEventName: "", //Monitor adaptation status events，default is hsAdapt
-        //setWrapAttr: false,
+        setWrapAttr: false,
       },
       domSwipe: "--",
+      show2: true,
     };
   },
   mounted() {
@@ -94,10 +118,10 @@ export default {
 html,
 body,
 #app {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  touch-action: none; /**disabled browser native event */
+  // width: 100%;
+  // height: 100%;
+  // overflow: hidden;
+  // touch-action: none; /**disabled browser native event */
 }
 @function px($num) {
   @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
