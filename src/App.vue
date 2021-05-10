@@ -1,6 +1,6 @@
 <template>
   <div id="app" @click="reset">
-    <div
+    <!-- <div
       v-horizontal-screen="obj"
       class="box"
       ref="hscreen"
@@ -22,7 +22,7 @@
         </div>
         <div class="footer"></div>
       </div>
-    </div>
+    </div> -->
     <div v-horizontal-screen="obj" class="box" ref="hscreen">
       <div id="wrap">
         <div class="header">
@@ -118,16 +118,17 @@ export default {
 html,
 body,
 #app {
-  // width: 100%;
-  // height: 100%;
-  // overflow: hidden;
-  // touch-action: none; /**disabled browser native event */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none; /**disabled browser native event */
 }
 @function px($num) {
   @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
 }
 .box {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: #fff;
