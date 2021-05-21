@@ -78,11 +78,11 @@ export default {
   },
   methods: {
     adaptedCallback(e) {
-      // clearTimeout(window.timer);
-      // window.timer = setTimeout(() => {
-      alert("adaptedCallback");
-      console.log("e", e);
-      //  }, 1000);
+      clearTimeout(window.timer);
+      window.timer = setTimeout(() => {
+        alert("adaptedCallback");
+        console.log("e", e);
+      }, 1000);
     },
     swipeCallback(obj) {
       if (obj.data.data.type) {
