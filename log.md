@@ -2,6 +2,7 @@
 
 - Replace ”AdaptEventName“ with ”adaptedCallback“
 - add params ”adaptedCallback“
+- fix adapted event no work at mobile
 
 # V 0.1.11
 

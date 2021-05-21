@@ -226,7 +226,7 @@ function hsLayoutFunc(obj={},e) {
         }
     }
     el.$hsAdapted = true;//已适配
-    if(e){
+    if(e!==false){
         dispatch(adaptEvent, el.$hsAdapted);
         if(typeof adaptedCallback==="function"){
             adaptedCallback(el,true);
@@ -261,9 +261,9 @@ function hsLayoutFunc(obj={},e) {
     var baseInfo={oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent,adaptedCallback,binding,vnode};
     let timer;
     el.$hsLayout = (dispatchAdatedEvent=false)=>{hsLayoutFunc(baseInfo,dispatchAdatedEvent)};
-    el.$delayLayout = function () {
+    el.$delayLayout = function (dispatchAdatedEvent=false) {
         clearTimeout(timer);
-        timer = setTimeout(() =>hsLayoutFunc(baseInfo), triggerTime);
+        timer = setTimeout(() =>hsLayoutFunc(baseInfo,dispatchAdatedEvent), triggerTime);
     };
     el.$hsAdapted = false;
     el.$hsLayout(false);
