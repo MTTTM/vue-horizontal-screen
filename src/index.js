@@ -120,9 +120,8 @@ function fnStartParams(obj={},el){
          obj.disY = curY - obj.startY;
      }
  }
- //鼠标放开
  /**
-  * 
+  * 鼠标放开
   * @param {String} callbackType 
   * @param {Object} baseInfo 
   * @param {Object<Event>} eventMaps 
