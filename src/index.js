@@ -182,15 +182,18 @@ function fnStartParams(obj={},el){
  }
 /**
  * 界面适配
- * @param {*} obj 
+ * @param {object} obj 
+ * @param {Event || bool} e 如果是监听器触发的，就是Event，如果是主动调用的就是boolean false
  */
-function hsLayoutFunc(obj={}) {
-    let {oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent}=obj;
+function hsLayoutFunc(obj={},e) {
+    let {oneTimesWidth,oneTimesHeight,cssVar,setWrapAttr,adaptEvent,adaptedCallback,el,binding,vnode}=obj;
     let clientWidth = window.innerWidth;
     let clientHeight = window.innerHeight;
     let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
     let percent = maxWidth / oneTimesWidth;
     let isPc = !isMobile();
+    let vm=binding.instance?binding.instance:vnode.context;//v2是放到vnode下面的，v3改为binding下面了
+    el.$hsAdapted = false;//未适配
     //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
     if (getDir() == 1 || isPc) {
         if (percent * oneTimesHeight > clientHeight) {
@@ -222,12 +225,19 @@ function hsLayoutFunc(obj={}) {
             el.style.height = `${clientHeight}px`;
         }
     }
-    
     el.$hsAdapted = true;//已适配
-    dispatch(adaptEvent, el.$hsAdapted);
+    if(e){
+        dispatch(adaptEvent, el.$hsAdapted);
+        if(typeof adaptedCallback==="function"){
+            adaptedCallback(el,true);
+        }
+        else if(vm&&typeof vm[adaptedCallback]==="function"){
+            vm[adaptedCallback](el,true);
+        }
+    }
 }
- function directiveBindfunction (el, binding) {
-    let { cssVar,width,height,times,triggerTime,AdaptEventName,setWrapAttr} = binding.value;
+ function directiveBindfunction (el, binding,vnode) {
+    let { cssVar,width,height,times,triggerTime,AdaptEventName,setWrapAttr,adaptedCallback} = binding.value;
     if (!times) {
         times = 1;
         console.warn("times is required!!");
@@ -248,15 +258,15 @@ function hsLayoutFunc(obj={}) {
         setWrapAttr=true;
     }
     let adaptEvent=createEvent(AdaptEventName);
-    var baseInfo={oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent};
+    var baseInfo={oneTimesWidth,oneTimesHeight,el,cssVar,setWrapAttr,adaptEvent,adaptedCallback,binding,vnode};
     let timer;
-    el.$hsLayout = ()=>{hsLayoutFunc(baseInfo)};
+    el.$hsLayout = (dispatchAdatedEvent=false)=>{hsLayoutFunc(baseInfo,dispatchAdatedEvent)};
     el.$delayLayout = function () {
         clearTimeout(timer);
         timer = setTimeout(() =>hsLayoutFunc(baseInfo), triggerTime);
     };
     el.$hsAdapted = false;
-    el.$hsLayout();
+    el.$hsLayout(false);
     if ("onorientationchange" in window) {
         window.removeEventListener('orientationchange',el.$delayLayout);
         window.addEventListener('orientationchange',el.$delayLayout, false);

@@ -14,15 +14,16 @@ npm install vue-horizontal-screen
 
 ### Directive
 
-| key            | desc                                                                     | default  | required |
-| -------------- | ------------------------------------------------------------------------ | -------- | -------- |
-| width          | Design draft width                                                       | --       | TRUE     |
-| height         | Design draft height                                                      | --       | TRUE     |
-| cssVar         | css variable name                                                        | --hc-var | FALSE    |
-| times          | Design draft multiple                                                    | --       | TRUE     |
-| triggerTime    | Time to trigger adaptation after window change(no work on computer side) | 1000     | FALSE    |
-| AdaptEventName | Adaptation status Event                                                  | hsAdapt  | FALSE    |
-| setWrapAttr    | Set the width and height of the container                                | TRUE     | FALSE    |
+| key             | desc                                                                                                | default  | required |
+| --------------- | --------------------------------------------------------------------------------------------------- | -------- | -------- |
+| width           | Design draft width                                                                                  | --       | TRUE     |
+| height          | Design draft height                                                                                 | --       | TRUE     |
+| cssVar          | css variable name                                                                                   | --hc-var | FALSE    |
+| times           | Design draft multiple                                                                               | --       | TRUE     |
+| triggerTime     | Time to trigger adaptation after window change(no work on computer side)                            | 1000     | FALSE    |
+| AdaptEventName  | Adaptation status Event <font color='red'> No longer recommend</font>                               | hsAdapt  | FALSE    |
+| adaptedCallback | adapted callback function,string or function,params:(el,bool) <font color='green'> recommend</font> | --       | FALSE    |
+| setWrapAttr     | Set the width and height of the container                                                           | TRUE     | FALSE    |
 
 ### directiveForDom
 
@@ -36,13 +37,13 @@ npm install vue-horizontal-screen
 - description pre {string} Event name prefix
 - description distance {number} The distance to trigger the event, default 50
 
-### event name
+### window.addEventListener
 
 - swipeLeft
 - swipeRight
 - swipeTop
 - swipeBottom
-- hsAdapt
+- hsAdapt <font color='red'> No longer recommend</font>
 
 ### css var usage
 
@@ -109,12 +110,13 @@ export default {
         width: 2001,
         height: 1125,
         cssVar: "hc-var",
-        times: 3
+        times: 3,
+        adaptedCallback: "adaptedCallback" //Replace  window’s event hsAdapt
       }
     };
   },
   mounted() {
-    window.addEventListener("hsAdapt", this.swipeCallback);
+    //window.addEventListener("hsAdapt", this.swipeCallback); //No longer recommend
     window.addEventListener("swipeLeft", this.swipeCallback);
     window.addEventListener("swipeRight", this.swipeCallback);
     window.addEventListener("swipeTop", this.swipeCallback);
@@ -122,13 +124,17 @@ export default {
   },
   beforeDestroy() {
     /*don't forget to remove eventlistener!!*/
-    window.removeEventListener("hsAdapt", this.swipeCallback);
+    // window.removeEventListener("hsAdapt", this.swipeCallback); //No longer recommend
     window.removeEventListener("swipeLeft", this.swipeCallback);
     window.removeEventListener("swipeRight", this.swipeCallback);
     window.removeEventListener("swipeTop", this.swipeCallback);
     window.removeEventListener("swipeBottom", this.swipeCallback);
   },
   methods: {
+    adaptedCallback(e) {
+      alert("adaptedCallback");
+      console.log("e", e);
+    },
     swipeCallback(obj) {
       if (obj.data.data.type) {
         alert(obj.data.data.type);

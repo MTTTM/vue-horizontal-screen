@@ -53,16 +53,16 @@ export default {
         height: 1125,
         cssVar: "hc-var",
         times: 3,
-        disabledresized: false, //removed after v0.1.7
-        AdaptEventName: "", //Monitor adaptation status events，default is hsAdapt
         setWrapAttr: false,
+        AdaptEventName: "", //(No longer recommend)Monitor adaptation status events，default is hsAdapt
+        adaptedCallback: "adaptedCallback", //(recommend)Replace  AdaptEventName
       },
       domSwipe: "--",
       show2: true,
     };
   },
   mounted() {
-    window.addEventListener("hsAdapt", this.swipeCallback);
+    // window.addEventListener("hsAdapt", this.swipeCallback);//No longer recommend
     window.addEventListener("swipeLeft", this.swipeCallback);
     window.addEventListener("swipeRight", this.swipeCallback);
     window.addEventListener("swipeTop", this.swipeCallback);
@@ -70,13 +70,20 @@ export default {
   },
   beforeUnmount() {
     /*don't forget to remove eventlistener!!*/
-    window.removeEventListener("hsAdapt", this.swipeCallback);
+    // window.removeEventListener("hsAdapt", this.swipeCallback);//No longer recommend
     window.removeEventListener("swipeLeft", this.swipeCallback);
     window.removeEventListener("swipeRight", this.swipeCallback);
     window.removeEventListener("swipeTop", this.swipeCallback);
     window.removeEventListener("swipeBottom", this.swipeCallback);
   },
   methods: {
+    adaptedCallback(e) {
+      clearTimeout(window.timer);
+      window.timer = setTimeout(() => {
+        alert("adaptedCallback");
+        console.log("e", e);
+      }, 1000);
+    },
     swipeCallback(obj) {
       if (obj.data.data.type) {
         alert(obj.data.data.type);
