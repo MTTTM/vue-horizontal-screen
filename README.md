@@ -18,7 +18,7 @@ npm install vue-horizontal-screen
 | --------------- | --------------------------------------------------------------------------------------------------- | -------- | -------- |
 | width           | Design draft width                                                                                  | --       | TRUE     |
 | height          | Design draft height                                                                                 | --       | TRUE     |
-| cssVar          | css variable name                                                                                   | --hc-var | FALSE    |
+| cssVar          | css variable name                                                                                   | --hs-var | FALSE    |
 | times           | Design draft multiple                                                                               | --       | TRUE     |
 | triggerTime     | Time to trigger adaptation after window change(no work on computer side)                            | 1000     | FALSE    |
 | AdaptEventName  | Adaptation status Event <font color='red'> No longer recommend</font>                               | hsAdapt  | FALSE    |
@@ -49,7 +49,7 @@ npm install vue-horizontal-screen
 
 ```scss
 @function px($num) {
-  @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
+  @return calc((#{$num}/ 3 * var(--hs-var)) * 1px);
 }
 .main {
   height: px(275 * 3);
@@ -109,7 +109,7 @@ export default {
       obj: {
         width: 2001,
         height: 1125,
-        cssVar: "hc-var",
+        cssVar: "hs-var",
         times: 3,
         adaptedCallback: "adaptedCallback" //Replace  window’s event hsAdapt
       }
@@ -178,7 +178,7 @@ body,
   overflow: hidden;
 }
 @function px($num) {
-  @return calc((#{$num}/ 3 * var(--hc-var)) * 1px);
+  @return calc((#{$num}/ 3 * var(--hs-var)) * 1px);
 }
 .box {
   display: flex;
