@@ -18,6 +18,7 @@ npm install vue-horizontal-screen
 | --------------- | --------------------------------------------------------------------------------------------------- | -------- | -------- |
 | width           | Design draft width                                                                                  | --       | TRUE     |
 | height          | Design draft height                                                                                 | --       | TRUE     |
+| rotate          | Rotation angle. 90 and -90 choose one                                                               | 90       | FALSE    |
 | cssVar          | css variable name                                                                                   | --hs-var | FALSE    |
 | times           | Design draft multiple                                                                               | --       | TRUE     |
 | triggerTime     | Time to trigger adaptation after window change(no work on computer side)                            | 1000     | FALSE    |
@@ -30,12 +31,15 @@ npm install vue-horizontal-screen
 - Bind events to document nodes
 - Modifier:`.stop` event.stopPropagation()
 - Modifier: `.prevent` event.preventDefault()
+- Modifier:`.clockwise` default true, when Directive params rotate is 90，use it
+- Modifier:`.counterclockwise`,when Directive params rotate is -90,use it.
 
 ### params of event
 
 - params {obj}
 - description pre {string} Event name prefix
 - description distance {number} The distance to trigger the event, default 50
+- description rotate {number} 90 or -90，Please stay the same as params rotate of Directive
 
 ### window.addEventListener
 
@@ -45,7 +49,7 @@ npm install vue-horizontal-screen
 - swipeBottom
 - hsAdapt <font color='red'> No longer recommend</font>
 
-### css var usage
+### css var usage (Just recommended, you can replace it with other layout units)
 
 ```scss
 @function px($num) {
