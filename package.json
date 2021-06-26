@@ -1,15 +1,16 @@
 {
   "name": "vue-horizontal-screen",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "license": "MIT",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dist": "gulp"
   },
   "files": [
-    "src/index.js"
+    "./dist/index.es.min.js"
   ],
   "keywords": [
     "vue",
@@ -18,24 +19,31 @@
     "screen",
     "horizontal-screen"
   ],
-  "main": "./src/index.js",
+  "main": "./dist/index.es.min.js",
   "repository": "https://github.com/MTTTM/vue-horizontal-screen",
   "description": "It provides horizontal web page layout and events",
   "dependencies": {
     "@vue/compiler-sfc": "^3.0.11",
     "core-js": "^3.6.5",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify": "^3.0.2",
     "node-sass": "^4.14.1",
     "vue": "^3.0.11",
     "vue-horizontal-screen": "^0.1.11",
     "vue-router": "^4.0.0-beta.13"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.14.7",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "core-js": "^3.12.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-uglify-es": "^2.0.0",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.11"
   },

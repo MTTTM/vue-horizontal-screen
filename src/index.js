@@ -178,13 +178,13 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
         let dir = getDir();//1=>横屏 0=>竖屏
         let newBaseInfo = { ...baseInfo, isHsAdapetAndMobile: dir !== 1 && isMobile() }
         if (dir == 1 || !isMobile()) {
-            if (disY < 0 && disY < Number(-distance)) {
+            if (disY < 0 && disY < -distance) {
                 dispatchSwipe("swipeTop", newBaseInfo);
             }
             else if (disY > 0 && disY > distance) {
                 dispatchSwipe("swipeBottom", newBaseInfo);
             }
-            if (disX < 0 && disX < Number(-distance)) {
+            if (disX < 0 && disX < -distance) {
                 dispatchSwipe("swipeLeft", newBaseInfo);
             }
             else if (disX > 0 && disX > distance) {
@@ -194,7 +194,7 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
         } else {
             //水平事件
             let hseventName = "";
-            if (disY < 0 && disY < Number(-distance)) {
+            if (disY < 0 && disY < -distance) {
                 rotate === 90 ? hseventName = "swipeLeft" : hseventName = "swipeRight";
             }
             else if (disY > 0 && disY > distance) {
@@ -203,7 +203,7 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
             hseventName && dispatchSwipe(hseventName, newBaseInfo)
             //垂直事件
             let eventName = "";
-            if (disX < 0 && disX < Number(-distance)) {
+            if (disX < 0 && disX < -distance) {
                 rotate === 90 ? eventName = "swipeBottom" : eventName = "swipeTop";
             }
             else if (disX > 0 && disX > distance) {
