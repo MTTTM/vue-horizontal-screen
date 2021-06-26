@@ -1,6 +1,6 @@
 {
   "name": "vue-horizontal-screen",
-  "version": "0.1.17",
+  "version": "0.1.19",
   "license": "MIT",
   "private": false,
   "scripts": {
@@ -10,8 +10,9 @@
     "dist": "gulp"
   },
   "files": [
-    "./dist/index.es.min.js"
+    "dist"
   ],
+  "main": "./dist/index.es.min.js",
   "keywords": [
     "vue",
     "vue-horizontal-screen",
@@ -19,7 +20,7 @@
     "screen",
     "horizontal-screen"
   ],
-  "main": "./dist/index.es.min.js",
+
   "repository": "https://github.com/MTTTM/vue-horizontal-screen",
   "description": "It provides horizontal web page layout and events",
   "dependencies": {
