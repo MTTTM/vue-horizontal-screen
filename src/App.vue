@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <a href="/home" class="home">home</a>
+    <a href="javascript:;" class="home" onclick="history.back()">home</a>
     <router-view></router-view>
   </div>
 </template>
@@ -99,7 +99,8 @@ body,
   position: fixed;
   right: 20px;
   top: 10px;
-  background: pink;
+  background: red;
+  color: #fff;
   z-index: 9999;
 }
 </style>
