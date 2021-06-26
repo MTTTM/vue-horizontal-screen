@@ -1,3 +1,7 @@
+# V0.1.16
+
+- 90 and -90 angles are optional
+
 # V 0.1.15
 
 - Replace ”AdaptEventName“ with ”adaptedCallback“

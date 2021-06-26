@@ -2,9 +2,10 @@
 
 ## Desc
 
-- It provides horizontal web page layout and events.[online](https://2gt9f.csb.app/)
+- It provides horizontal web page layout and events.[online](https://mtttm.github.io/vue-horizontal-screen/#/home)
 - Support computer(Version 0.1.3 or greater)
 - Support V3(Version 0.1.11 or greater)
+- [log](https://github.com/MTTTM/vue-horizontal-screen/blob/main/log.md)
 
 ## Start
 

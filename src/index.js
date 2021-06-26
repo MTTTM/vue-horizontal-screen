@@ -130,7 +130,6 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
     //判断派发哪个事件
     let swipes = {
         win: function (swipeName, data) {
-            console.log("触发事件", swipeName)
             if (eventMaps[swipeName] && eventMaps[swipeName] instanceof Event) {
                 dispatch(eventMaps[swipeName], data);
             }
