@@ -10,7 +10,7 @@ export default class App extends React.Component {
       hsObj: {
         width: 2001,
         height: 1125,
-        cssVar: "hc-var",
+        cssvar: "hc-var",
         times: 3,
         rotate: 90
       },
@@ -74,7 +74,7 @@ export default class App extends React.Component {
     return (
       <div className="App">
         <HorizontalScreen
-          attrs={this.state.hsObj}
+          {...this.state.hsObj}
           adaptedCallback={this.adaptedCallback}
           className="box">
           <div id="wrap">

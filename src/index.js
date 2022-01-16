@@ -232,7 +232,7 @@ function hsLayoutFunc(obj = {}, e) {
     let {
         oneTimesWidth,
         oneTimesHeight,
-        cssVar,
+        cssvar,
         setWrapAttr,
         adaptEvent,
         adaptedCallback,
@@ -256,7 +256,7 @@ function hsLayoutFunc(obj = {}, e) {
             percent = clientWidth / oneTimesHeight;
         }
     }
-    document.querySelector('html').style.setProperty(`--${cssVar}`, percent);
+    document.querySelector('html').style.setProperty(`--${cssvar}`, percent);
     //在竖屏状态我们通过添加transform:rotate(90deg)，来让这个页面横过来
     if ((window.orientation == null
         || window.orientation === 180
@@ -295,39 +295,8 @@ function hsLayoutFunc(obj = {}, e) {
     }
 }
 function directiveBindfunction(el, binding) {
-    //兼容react和vue
-    let isReact = binding.attrs;
-    const getBindingAttr = function () {
-        let {
-            cssVar,
-            width,
-            height,
-            times,
-            triggerTime,
-            AdaptEventName,
-            setWrapAttr,
-            adaptedCallback,
-            rotate
-        } = isReact ? binding.attrs : binding.value;
-        // 
-        if (isReact) {
-            adaptedCallback = binding.adaptedCallback;
-        }
-        return {
-            cssVar,
-            width,
-            height,
-            times,
-            triggerTime,
-            AdaptEventName,
-            setWrapAttr,
-            adaptedCallback,
-            rotate
-        }
-    }
-
     let {
-        cssVar,
+        cssvar,
         width,
         height,
         times,
@@ -336,7 +305,7 @@ function directiveBindfunction(el, binding) {
         setWrapAttr,
         adaptedCallback,
         rotate
-    } = getBindingAttr();
+    } = binding;
     rotate = fixParamsRotate(rotate);
     if (!times) {
         times = 1;
@@ -344,8 +313,8 @@ function directiveBindfunction(el, binding) {
     }
     let oneTimesWidth = width / times;
     let oneTimesHeight = height / times;
-    if (!cssVar) {
-        cssVar = "hs-var";
+    if (!cssvar) {
+        cssvar = "hs-var";
     }
     if (!AdaptEventName) {
         AdaptEventName = "hsAdapt";
@@ -353,7 +322,7 @@ function directiveBindfunction(el, binding) {
     if (!triggerTime) {
         triggerTime = 1000;
     }
-    let bool = 'setWrapAttr' in (isReact ? binding : binding.value);
+    let bool = 'setWrapAttr' in binding;
     if (!bool) {
         setWrapAttr = true;
     }
@@ -362,7 +331,7 @@ function directiveBindfunction(el, binding) {
         oneTimesWidth,
         oneTimesHeight,
         el,
-        cssVar,
+        cssvar,
         setWrapAttr,
         adaptEvent,
         adaptedCallback,
@@ -394,21 +363,7 @@ function directiveUnBind(el) {
 }
 
 function directiveForDomfunction(el, binding) {
-    //适配数据获取
-    function getBindingAttrs() {
-        let isReact = !binding.value;
-        if (isReact) {
-            let { stop, prevent, swipeCallBack, rotate } = binding;
-            console.log("binding??", binding)
-            return { stop, prevent, callback: swipeCallBack, rotate };
-        }
-        else {
-            let callback = binding.value;
-            let { stop, prevent, rotate } = binding.modifiers ? binding.modifiers : binding;
-            return { stop, prevent, rotate, callback };
-        }
-    }
-    let { stop, prevent, callback, rotate } = getBindingAttrs();
+    let { stop, prevent, swipeCallBack, rotate } = binding;
     let baseInfo = {
         startX: 0,
         startY: 0,
@@ -421,7 +376,7 @@ function directiveForDomfunction(el, binding) {
     //标记事件
     let startFn = el.$startFn = fnStartParams(baseInfo, el);
     let moveFn = el.$moveFn = fnMoveParams(baseInfo, el);
-    let endFn = el.$endFn = fnEndParams('doms', baseInfo, {}, callback, el);
+    let endFn = el.$endFn = fnEndParams('doms', baseInfo, {}, swipeCallBack, el);
     if (isMobile()) {
         el.addEventListener("touchstart", startFn, false);
         el.addEventListener('touchmove', moveFn, false);

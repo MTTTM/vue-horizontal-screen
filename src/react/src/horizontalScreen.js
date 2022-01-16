@@ -42,15 +42,13 @@ export default class HorizontalScreen extends React.Component {
   }
 };
 HorizontalScreen.propTypes = {
-  attrs: PropTypes.exact({
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    cssVar: PropTypes.string.isRequired,
-    times: PropTypes.number.isRequired,
-    triggerTime: PropTypes.number,
-    AdaptEventName: PropTypes.string,
-    setWrapAttr: PropTypes.bool,
-    rotate: PropTypes.oneOf([90, -90])
-  }),
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  cssvar: PropTypes.string.isRequired,
+  times: PropTypes.number.isRequired,
+  triggerTime: PropTypes.number,
+  AdaptEventName: PropTypes.string,
+  setWrapAttr: PropTypes.bool,
+  rotate: PropTypes.oneOf([90, -90]),
   adaptedCallback: PropTypes.func,
 }
