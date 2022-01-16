@@ -11,18 +11,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { directiveForDom } from "../../index.js";
+import { ThemeContext } from "./ThemeContext.js"
 export default class SwipeWrap extends React.Component {
+  static contextType = ThemeContext;
   constructor(props) {
     super(props);
     this.myRef = React.createRef();
   }
   componentDidMount() {
-    directiveForDom.bind(this.myRef.current, this.props);
+
+    directiveForDom.bind(this.myRef.current, { rotate: this.context, ...this.props });
+    console.log("binding context ? routate", this.context)
+  }
+  componentWillUnmount() {
+    directiveForDom.unbind(this.myRef.current);
+  }
+  UNSAFE_componentWillUpdate() {
+    console.log("子容器", this.context)
+    if (this.context) {
+      directiveForDom.unbind(this.myRef.current);
+      directiveForDom.bind(this.myRef.current, { rotate: this.context, ...this.props });
+      return true;
+    }
+    return false;
   }
   render() {
     let { stop, prevent, swipeCallBack, ...params } = this.props;
     return (
-      <div ref={this.myRef}  {...params}>{this.props.children}</div>
+      //rotate从父级获取，不接受外部传入
+      <div ref={this.myRef}  {...params} >{this.props.children}</div>
     )
   }
 };

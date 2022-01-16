@@ -11,7 +11,8 @@ export default class App extends React.Component {
         width: 2001,
         height: 1125,
         cssVar: "hc-var",
-        times: 3
+        times: 3,
+        rotate: 90
       },
       domSwipeText: "",
       domSwipeText2: "",
@@ -56,6 +57,18 @@ export default class App extends React.Component {
       alert('hsAdapt');
     }, 1000)
   }
+  changeRoate() {
+    let rotate = this.state.hsObj.rotate == 90 ? -90 : 90;
+    this.setState({
+      "hsObj": {
+        width: 2001,
+        height: 1125,
+        cssVar: "hc-var",
+        times: 3,
+        rotate: rotate
+      }
+    })
+  }
 
   render() {
     return (
@@ -67,7 +80,9 @@ export default class App extends React.Component {
           <div id="wrap">
             <div className="header">
               <div className="left">25</div>
-              <div className="mid">40</div>
+              <div className="mid">
+                <span onClick={() => this.changeRoate()}>CLICK ME!current route {this.state.hsObj.rotate}</span>
+              </div>
               <div className="right">50</div>
             </div>
             <div className="main">

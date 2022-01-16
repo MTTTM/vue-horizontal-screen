@@ -199,6 +199,7 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
         } else {
             //水平事件
             let hseventName = "";
+            console.log("rotate===", rotate)
             if (disY < 0 && disY < -distance) {
                 rotate === 90 ? hseventName = "swipeLeft" : hseventName = "swipeRight";
             }
@@ -293,7 +294,7 @@ function hsLayoutFunc(obj = {}, e) {
         }
     }
 }
-function directiveBindfunction(el, binding, vnode) {
+function directiveBindfunction(el, binding) {
     //兼容react和vue
     let isReact = binding.attrs;
     const getBindingAttr = function () {
@@ -310,31 +311,18 @@ function directiveBindfunction(el, binding, vnode) {
         } = isReact ? binding.attrs : binding.value;
         // 
         if (isReact) {
-            let adaptedCallback = binding.adaptedCallback;
-            return {
-                cssVar,
-                width,
-                height,
-                times,
-                triggerTime,
-                AdaptEventName,
-                setWrapAttr,
-                adaptedCallback,
-                rotate
-            }
+            adaptedCallback = binding.adaptedCallback;
         }
-        else {
-            return {
-                cssVar,
-                width,
-                height,
-                times,
-                triggerTime,
-                AdaptEventName,
-                setWrapAttr,
-                adaptedCallback,
-                rotate
-            }
+        return {
+            cssVar,
+            width,
+            height,
+            times,
+            triggerTime,
+            AdaptEventName,
+            setWrapAttr,
+            adaptedCallback,
+            rotate
         }
     }
 
@@ -370,7 +358,17 @@ function directiveBindfunction(el, binding, vnode) {
         setWrapAttr = true;
     }
     let adaptEvent = createEvent(AdaptEventName);
-    var baseInfo = { oneTimesWidth, oneTimesHeight, el, cssVar, setWrapAttr, adaptEvent, adaptedCallback, binding, vnode, rotate };
+    var baseInfo = {
+        oneTimesWidth,
+        oneTimesHeight,
+        el,
+        cssVar,
+        setWrapAttr,
+        adaptEvent,
+        adaptedCallback,
+        binding,
+        rotate
+    };
     let timer;
     el.$hsLayout = (dispatchAdatedEvent = false) => { hsLayoutFunc(baseInfo, dispatchAdatedEvent) };
     el.$delayLayout = function (dispatchAdatedEvent = false) {
@@ -400,29 +398,17 @@ function directiveForDomfunction(el, binding) {
     function getBindingAttrs() {
         let isReact = !binding.value;
         if (isReact) {
-            let { stop, prevent, swipeCallBack } = binding;
-            return { stop, prevent, callback: swipeCallBack };
+            let { stop, prevent, swipeCallBack, rotate } = binding;
+            console.log("binding??", binding)
+            return { stop, prevent, callback: swipeCallBack, rotate };
         }
         else {
             let callback = binding.value;
-            let { stop, prevent, clockwise, counterclockwise } = binding.modifiers ? binding.modifiers : binding;
-            return { stop, prevent, clockwise, counterclockwise, callback };
+            let { stop, prevent, rotate } = binding.modifiers ? binding.modifiers : binding;
+            return { stop, prevent, rotate, callback };
         }
     }
-    console.log("binding", binding)
-
-    let { stop, prevent, callback, clockwise, counterclockwise } = getBindingAttrs();
-    console.log("callback", callback)
-    //clockwise是否是顺时钟等于90度选项
-    //counterclockwise 逆时针等于-90度
-    let rotate = 90;
-    //逆时间优先级最大，只要出现就是逆时针，也就旋转-90度
-    if (counterclockwise) {
-        rotate = -90;
-    }
-    else if (clockwise) {
-        rotate = 90;
-    }
+    let { stop, prevent, callback, rotate } = getBindingAttrs();
     let baseInfo = {
         startX: 0,
         startY: 0,
@@ -433,9 +419,9 @@ function directiveForDomfunction(el, binding) {
     el.$stop = stop;
     el.$prevent = prevent;
     //标记事件
-    let startFn = fnStartParams(baseInfo, el);
-    let moveFn = fnMoveParams(baseInfo, el);
-    let endFn = fnEndParams('doms', baseInfo, {}, callback, el);
+    let startFn = el.$startFn = fnStartParams(baseInfo, el);
+    let moveFn = el.$moveFn = fnMoveParams(baseInfo, el);
+    let endFn = el.$endFn = fnEndParams('doms', baseInfo, {}, callback, el);
     if (isMobile()) {
         el.addEventListener("touchstart", startFn, false);
         el.addEventListener('touchmove', moveFn, false);
@@ -447,7 +433,12 @@ function directiveForDomfunction(el, binding) {
         el.addEventListener("mouseup", endFn, false);
     }
 }
-
+function directiveForDomfunctionUnBind(el) {
+    /**这谷歌浏览器调试监听工具有bug，如果销毁了一个绑定适配指令的节点，但是看到监听器没有解除，可以关掉调试面板再打开调试面板就可以看到了*/
+    el.removeEventListener("touchstart", el.$startFn);
+    el.removeEventListener('touchmove', el.$moveFn);
+    el.removeEventListener('touchend', el.$endFn);
+}
 export const directive = {
     bind: directiveBindfunction,
     unbind: directiveUnBind,
@@ -457,6 +448,8 @@ export const directive = {
 export const directiveForDom = {
     bind: directiveForDomfunction,
     beforeMount: directiveForDomfunction,//v3
+    unbind: directiveForDomfunctionUnBind,
+    unmounted: directiveForDomfunctionUnBind//v3
 
 }
 let eventInited = false;

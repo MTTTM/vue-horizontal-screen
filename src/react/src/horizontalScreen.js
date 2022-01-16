@@ -10,11 +10,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { directive } from "../../index.js";
+import { ThemeContext } from "./ThemeContext.js"
 export default class HorizontalScreen extends React.Component {
   constructor(props) {
     super(props);
     this.myRef = React.createRef();
+    this.state = {}
   }
+  UNSAFE_componentWillUpdate(nextProps) {
+    if (nextProps.attrs && nextProps.attrs.rotate) {
+      directive.unbind(this.myRef.current);
+      directive.bind(this.myRef.current, nextProps);
+      return true;
+    }
+    return false;
+  }
+
   componentDidMount() {
     directive.bind(this.myRef.current, this.props);
   }
@@ -24,7 +35,9 @@ export default class HorizontalScreen extends React.Component {
   render() {
     let { adaptedCallback, attrs, ...params } = this.props;
     return (
-      <div ref={this.myRef}  {...params}>{this.props.children}</div>
+      <ThemeContext.Provider value={attrs && attrs.rotate ? attrs.rotate : 90}>
+        <div ref={this.myRef}  {...params}>{this.props.children}</div>
+      </ThemeContext.Provider>
     )
   }
 };
@@ -37,6 +50,7 @@ HorizontalScreen.propTypes = {
     triggerTime: PropTypes.number,
     AdaptEventName: PropTypes.string,
     setWrapAttr: PropTypes.bool,
+    rotate: PropTypes.oneOf([90, -90])
   }),
   adaptedCallback: PropTypes.func,
 }
