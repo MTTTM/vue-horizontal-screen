@@ -9,7 +9,8 @@
 // +----------------------------------------------------------------------
 import horizontalScreen from "./horizontalScreen.js"
 import swipeWrap from "./swipeWrap.js"
-import {event as Event} from "./funcs.js"
-export const HorizontalScreen=horizontalScreen;
-export const SwipeWrap=swipeWrap;
-export const event=Event;
+import { event as Event } from "../../index.js"
+console.log("event", event)
+export const HorizontalScreen = horizontalScreen;
+export const SwipeWrap = swipeWrap;
+export const event = Event;

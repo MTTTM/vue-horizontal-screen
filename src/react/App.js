@@ -38,7 +38,7 @@ export default class App extends React.Component {
       console.log("swipeBottom");
       this.setState({ "domSwipeText2": "swipeBottom" })
     } else if (type == "swipeTop" && dis >= 5) {
-      this.setState({ "domSwipeText2": "swipeTip" })
+      this.setState({ "domSwipeText2": "swipeTop" })
     }
   }
   swipeCallback(obj) {
