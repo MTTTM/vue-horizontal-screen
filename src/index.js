@@ -138,7 +138,9 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
             }
         },
         doms: function (swipeName, data) {
+            console.log("callback", callback)
             try {
+
                 callback(data, el);
             } catch (e) {
                 console.error("swipe event callback should be a function!!")
@@ -174,6 +176,7 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
                 dis = Math.abs(disY);
             }
         }
+        console.log("callback nasme ", callbackType, name)
         swipes[callbackType](name, { dis, type: name, rotate });
     }
     return function (ev) {
@@ -199,11 +202,13 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
         } else {
             //水平事件
             let hseventName = "";
-            console.log("rotate===", rotate)
+            console.log("rotate===", rotate, disY, distance)
             if (disY < 0 && disY < -distance) {
+                console.log("rotate=== 1", rotate)
                 rotate === 90 ? hseventName = "swipeLeft" : hseventName = "swipeRight";
             }
             else if (disY > 0 && disY > distance) {
+                console.log("rotate=== 2", rotate)
                 rotate === 90 ? hseventName = "swipeRight" : hseventName = "swipeLeft";
             }
             hseventName && dispatchSwipe(hseventName, newBaseInfo)
@@ -363,7 +368,8 @@ function directiveUnBind(el) {
 }
 
 function directiveForDomfunction(el, binding) {
-    let { stop, prevent, swipeCallBack, rotate } = binding;
+    let { stop, prevent, swipeCallback, rotate } = binding;
+    console.log("??rotate", rotate, el, swipeCallback)
     let baseInfo = {
         startX: 0,
         startY: 0,
@@ -376,7 +382,7 @@ function directiveForDomfunction(el, binding) {
     //标记事件
     let startFn = el.$startFn = fnStartParams(baseInfo, el);
     let moveFn = el.$moveFn = fnMoveParams(baseInfo, el);
-    let endFn = el.$endFn = fnEndParams('doms', baseInfo, {}, swipeCallBack, el);
+    let endFn = el.$endFn = fnEndParams('doms', baseInfo, {}, swipeCallback, el);
     if (isMobile()) {
         el.addEventListener("touchstart", startFn, false);
         el.addEventListener('touchmove', moveFn, false);
@@ -397,15 +403,10 @@ function directiveForDomfunctionUnBind(el) {
 export const directive = {
     bind: directiveBindfunction,
     unbind: directiveUnBind,
-    beforeMount: directiveBindfunction,//v3
-    unmounted: directiveUnBind//v3
 }
 export const directiveForDom = {
     bind: directiveForDomfunction,
-    beforeMount: directiveForDomfunction,//v3
     unbind: directiveForDomfunctionUnBind,
-    unmounted: directiveForDomfunctionUnBind//v3
-
 }
 let eventInited = false;
 /**

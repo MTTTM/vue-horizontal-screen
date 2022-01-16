@@ -7,8 +7,8 @@
 // +----------------------------------------------------------------------
 // | Author: MTTTM 
 // +----------------------------------------------------------------------
-import horizontalScreen from "./horizontalScreen.js"
-import swipeWrap from "./swipeWrap.js"
+import horizontalScreen from "./horizontalScreen.vue"
+import swipeWrap from "./swipeWrap.vue"
 import { event as Event } from "../../index.js"
 export const HorizontalScreen = horizontalScreen;
 export const SwipeWrap = swipeWrap;

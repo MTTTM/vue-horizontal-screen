@@ -20,7 +20,7 @@ console.log("%chttp://" + myHost + ":8080", 'color:red')
 
 
 module.exports = {
-  entry: './src/react/index.js',
+  entry: './src/vue/index.js',
   // output: {
   //   path: path.resolve(__dirname, './dist'),
   //   publicPath: '/dist/',

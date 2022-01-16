@@ -1,44 +1,53 @@
 <template>
-  <div id="app">
-    <a href="javascript:;" class="home" onclick="history.back()">home</a>
-    <router-view></router-view>
-  </div>
+  <HorizontalScreen v-bind="obj" :adaptedCallback="adaptedCallback">
+    <div id="wrap">
+      <div class="header">
+        <div class="left">25</div>
+        <div class="mid">
+          <span @click="changeRotate">Click HERE: {{ obj.rotate }}</span>
+        </div>
+        <div class="right">50</div>
+      </div>
+      <div class="main">
+        <SwipeWrap class="dom-event" :swipeCallback="hsSwipe">
+          <p>Horizontal event</p>
+          <h3>swipe type:{{ domSwipe }}</h3>
+        </SwipeWrap>
+        <SwipeWrap class="dom-event2" :swipeCallback="hsSwipe2">
+          <p>Vertical event</p>
+          <h3>swipe type:{{ domSwipe2 }}</h3>
+        </SwipeWrap>
+      </div>
+      <div class="footer"></div>
+    </div>
+  </HorizontalScreen>
 </template>
 
 <script>
+import "../index.scss";
+import { HorizontalScreen, SwipeWrap } from "./src/index.js";
 export default {
   name: "App",
+  components: { HorizontalScreen, SwipeWrap },
   data() {
     return {
       obj: {
         width: 2001,
         height: 1125,
-        cssVar: "hc-var",
+        cssvar: "hs-var",
         times: 3,
-        setWrapAttr: false,
+        rotate: 90,
         AdaptEventName: "", //(No longer recommend)Monitor adaptation status events，default is hsAdapt
-        adaptedCallback: "adaptedCallback", //(recommend)Replace  AdaptEventName
       },
       domSwipe: "--",
+      domSwipe2: "--",
       show2: true,
     };
   },
-  mounted() {
-    // window.addEventListener("hsAdapt", this.swipeCallback);//No longer recommend
-    window.addEventListener("swipeLeft", this.swipeCallback);
-    window.addEventListener("swipeRight", this.swipeCallback);
-    window.addEventListener("swipeTop", this.swipeCallback);
-    window.addEventListener("swipeBottom", this.swipeCallback);
-  },
-  beforeUnmount() {
-    /*don't forget to remove eventlistener!!*/
-    // window.removeEventListener("hsAdapt", this.swipeCallback);//No longer recommend
-    window.removeEventListener("swipeLeft", this.swipeCallback);
-    window.removeEventListener("swipeRight", this.swipeCallback);
-    window.removeEventListener("swipeTop", this.swipeCallback);
-    window.removeEventListener("swipeBottom", this.swipeCallback);
-  },
   methods: {
+    changeRotate() {
+      this.obj.rotate = this.obj.rotate == 90 ? -90 : 90;
+    },
     adaptedCallback(e) {
       clearTimeout(window.timer);
       window.timer = setTimeout(() => {
@@ -66,13 +75,18 @@ export default {
         console.log("swipeRight");
         this.domSwipe = "swipeRight";
       }
-      // if (type == "swipeBottom" && dis >= 5) {
-      //   console.log("swipeBottom");
-      //   this.domSwipe = "swipeBottom";
-      // } else if (type == "swipeTop" && dis >= 5) {
-      //   console.log("swipeTop");
-      //   this.domSwipe = "swipeTop";
-      // }
+    },
+    hsSwipe2(data, el) {
+      let { type, dis } = data;
+      console.error("dom event", data, type, dis, el);
+
+      if (type == "swipeBottom" && dis >= 5) {
+        console.log("swipeBottom");
+        this.domSwipe2 = "swipeBottom";
+      } else if (type == "swipeTop" && dis >= 5) {
+        console.log("swipeTop");
+        this.domSwipe2 = "swipeTop";
+      }
     },
   },
 };

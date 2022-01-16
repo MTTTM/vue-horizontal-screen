@@ -23,7 +23,7 @@ body,
   overflow: hidden;
 }
 @function px($num) {
-  @return calc(#{$num}/ 3 * var(--hc-var) * 1px);
+  @return calc(#{$num}/ 3 * var(--hs-var) * 1px);
 }
 .box {
   display: flex;
