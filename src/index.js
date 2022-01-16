@@ -138,7 +138,12 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
             }
         },
         doms: function (swipeName, data) {
-            callback(data, el);
+            try {
+                callback(data, el);
+            } catch (e) {
+                console.error("swipe event callback should be a function!!")
+            }
+
         },
     }
     //组合派发事件的参数
@@ -222,13 +227,22 @@ function fnEndParams(callbackType = "", baseInfo = {}, eventMaps = {}, callback,
  * @param {Event || bool} e 如果是监听器触发的，就是Event，如果是主动调用的就是boolean false
  */
 function hsLayoutFunc(obj = {}, e) {
-    let { oneTimesWidth, oneTimesHeight, cssVar, setWrapAttr, adaptEvent, adaptedCallback, el, binding, vnode, rotate } = obj;
+    console.log("窗口大小变了")
+    let {
+        oneTimesWidth,
+        oneTimesHeight,
+        cssVar,
+        setWrapAttr,
+        adaptEvent,
+        adaptedCallback,
+        el,
+        rotate
+    } = obj;
     let clientWidth = window.innerWidth;
     let clientHeight = window.innerHeight;
     let maxWidth = clientWidth > clientHeight ? clientWidth : clientHeight;
     let percent = maxWidth / oneTimesWidth;
     let isPc = !isMobile();
-    let vm = binding.instance ? binding.instance : vnode.context;//v2是放到vnode下面的，v3改为binding下面了
     el.$hsAdapted = false;//未适配
     //如果按照宽度比例缩放后，布局高度比设备高度大，那就用高度来做比例
     if (getDir() == 1 || isPc) {
@@ -274,13 +288,67 @@ function hsLayoutFunc(obj = {}, e) {
         if (typeof adaptedCallback === "function") {
             adaptedCallback(el, true);
         }
-        else if (vm && typeof vm[adaptedCallback] === "function") {
-            vm[adaptedCallback](el, true);
+        else {
+            console.warn("adaptedCallback no a fucntion")
         }
     }
 }
 function directiveBindfunction(el, binding, vnode) {
-    let { cssVar, width, height, times, triggerTime, AdaptEventName, setWrapAttr, adaptedCallback, rotate } = binding.value;
+    //兼容react和vue
+    let isReact = binding.attrs;
+    const getBindingAttr = function () {
+        let {
+            cssVar,
+            width,
+            height,
+            times,
+            triggerTime,
+            AdaptEventName,
+            setWrapAttr,
+            adaptedCallback,
+            rotate
+        } = isReact ? binding.attrs : binding.value;
+        // 
+        if (isReact) {
+            let adaptedCallback = binding.adaptedCallback;
+            return {
+                cssVar,
+                width,
+                height,
+                times,
+                triggerTime,
+                AdaptEventName,
+                setWrapAttr,
+                adaptedCallback,
+                rotate
+            }
+        }
+        else {
+            return {
+                cssVar,
+                width,
+                height,
+                times,
+                triggerTime,
+                AdaptEventName,
+                setWrapAttr,
+                adaptedCallback,
+                rotate
+            }
+        }
+    }
+
+    let {
+        cssVar,
+        width,
+        height,
+        times,
+        triggerTime,
+        AdaptEventName,
+        setWrapAttr,
+        adaptedCallback,
+        rotate
+    } = getBindingAttr();
     rotate = fixParamsRotate(rotate);
     if (!times) {
         times = 1;
@@ -297,7 +365,7 @@ function directiveBindfunction(el, binding, vnode) {
     if (!triggerTime) {
         triggerTime = 1000;
     }
-    let bool = 'setWrapAttr' in binding.value;
+    let bool = 'setWrapAttr' in (isReact ? binding : binding.value);
     if (!bool) {
         setWrapAttr = true;
     }
@@ -326,9 +394,25 @@ function directiveUnBind(el) {
     window.removeEventListener('orientationchange', el.$delayLayout);
     el.$hsLayout = null;
 }
+
 function directiveForDomfunction(el, binding) {
-    let callback = binding.value;
-    let { stop, prevent, clockwise, counterclockwise } = binding.modifiers;
+    //适配数据获取
+    function getBindingAttrs() {
+        let isReact = !binding.value;
+        if (isReact) {
+            let { stop, prevent, swipeCallBack } = binding;
+            return { stop, prevent, callback: swipeCallBack };
+        }
+        else {
+            let callback = binding.value;
+            let { stop, prevent, clockwise, counterclockwise } = binding.modifiers ? binding.modifiers : binding;
+            return { stop, prevent, clockwise, counterclockwise, callback };
+        }
+    }
+    console.log("binding", binding)
+
+    let { stop, prevent, callback, clockwise, counterclockwise } = getBindingAttrs();
+    console.log("callback", callback)
     //clockwise是否是顺时钟等于90度选项
     //counterclockwise 逆时针等于-90度
     let rotate = 90;

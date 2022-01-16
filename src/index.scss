@@ -1,0 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none; /**disabled browser native event */
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+@function px($num) {
+  @return calc(#{$num}/ 3 * var(--hc-var) * 1px);
+}
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: red;
+}
+#wrap {
+  width: px(667 * 3);
+  height: px(375 * 3);
+}
+.header {
+  height: px(50 * 3);
+  background: blue;
+  display: flex;
+  color: red;
+  .left {
+    background: pink;
+    height: px(25 * 3);
+    width: px(300 * 3);
+  }
+  .mid {
+    background: yellow;
+    height: px(40 * 3);
+    width: px(300 * 3);
+  }
+  .right {
+    background: black;
+    height: px(50 * 3);
+    width: px(75 * 3);
+  }
+}
+.main {
+  height: px(275 * 3);
+  background: green;
+}
+.dom-event{
+  height: px(100 * 3);
+  background:pink;
+}
+.dom-event2{
+  height: px(175 * 3);
+  background:orchid;
+}
+.footer {
+  height: px(50 * 3);
+  background: blue;
+}
