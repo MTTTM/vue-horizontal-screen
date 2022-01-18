@@ -19,15 +19,12 @@ export default class SwipeWrap extends React.Component {
     this.myRef = React.createRef();
   }
   componentDidMount() {
-
     directiveForDom.bind(this.myRef.current, { rotate: this.context, ...this.props });
-    console.log("binding context ? routate", this.context)
   }
   componentWillUnmount() {
     directiveForDom.unbind(this.myRef.current);
   }
   UNSAFE_componentWillUpdate() {
-    console.log("子容器", this.context)
     if (this.context) {
       directiveForDom.unbind(this.myRef.current);
       directiveForDom.bind(this.myRef.current, { rotate: this.context, ...this.props });

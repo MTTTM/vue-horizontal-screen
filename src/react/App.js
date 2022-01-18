@@ -1,5 +1,6 @@
 import React from 'react';
 import { HorizontalScreen, SwipeWrap, event } from "./src/index.js"
+// import { HorizontalScreen, SwipeWrap, event } from "../../dist/react.horizontalScreen.es"
 // import {HorizontalScreen,SwipeWrap,event} from "react-horizontal-screen"
 // import {HorizontalScreen,SwipeWrap,event} from "react-xx"
 event();
@@ -10,7 +11,7 @@ export default class App extends React.Component {
       hsObj: {
         width: 2001,
         height: 1125,
-        cssvar: "hc-var",
+        cssvar: "hs-var",
         times: 3,
         rotate: 90
       },
@@ -63,7 +64,7 @@ export default class App extends React.Component {
       "hsObj": {
         width: 2001,
         height: 1125,
-        cssVar: "hc-var",
+        cssvar: "hs-var",
         times: 3,
         rotate: rotate
       }
@@ -87,7 +88,7 @@ export default class App extends React.Component {
             </div>
             <div className="main">
               <SwipeWrap
-                swipeCallBack={(data, el) => this.swipeCallBack(data, el)}
+                swipeCallback={(data, el) => this.swipeCallBack(data, el)}
                 stop={true}
                 prevent={true}
                 className="dom-event">
@@ -98,7 +99,7 @@ export default class App extends React.Component {
               </SwipeWrap>
 
               <SwipeWrap
-                swipeCallBack={(data, el) => this.swipeCallBack2(data, el)}
+                swipeCallback={(data, el) => this.swipeCallBack2(data, el)}
                 stop={true}
                 prevent={true}
                 className="dom-event">

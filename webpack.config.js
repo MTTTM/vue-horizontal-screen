@@ -21,11 +21,6 @@ console.log("%chttp://" + myHost + ":8080", 'color:red')
 
 module.exports = {
   entry: './src/vue/index.js',
-  // output: {
-  //   path: path.resolve(__dirname, './dist'),
-  //   publicPath: '/dist/',
-  //   filename: 'build.js'
-  // },
   module: {
     rules: [
       {
@@ -98,38 +93,65 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: 'hidden-source-map',
-  plugins: [
+  devtool: "#source-map",
+}
 
+//开发环境入口
+console.log("env", process.env.NODE_ENV, 'lang_Env', process.env.lang_ENV)
+if (process.env.NODE_ENV === "development") {
+  if (process.env.lang_ENV === 'react') {
+    let entry = { entry: './src/react/index.js' }
+    module.exports = Object.assign({}, module.exports, entry)
+    console.log("module.exports", module.exports.entry)
+  }
+  else {
+    let entry = { entry: './src/vue/index.js' }
+    module.exports = Object.assign({}, module.exports, entry)
+  }
+  module.exports.plugins = [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'public/index.html',// 定义的html为模板生成 从根路径开始查找
+      inject: 'body',
+      minify: {// 压缩HTML文件
+        removeComments: true,//去除注释
+        collapseWhitespace: true,//去除空格
+      },
+    }),
   ]
+}
+else if (process.env.NODE_ENV === "production") {
+  module.exports.entry = {
+    react: './src/react/src/index.js',
+    vue: './src/vue/src/index.js'
+  };
+  module.exports.output = {
+    filename: '[name].horizontalScreen.es.js',
+    path: path.resolve(__dirname, 'dist')
+  }
 }
 
 
-module.exports.devtool = '#source-map'
-// http://vue-loader.vuejs.org/en/workflow/production.html
-module.exports.plugins = (module.exports.plugins || []).concat([
-  new webpack.DefinePlugin({
-    'process.env': {
-      NODE_ENV: '"development"'
-    }
-  }),
-  new webpack.optimize.UglifyJsPlugin({
-    sourceMap: true,
-    compress: {
-      warnings: false
-    }
-  }),
-  new webpack.LoaderOptionsPlugin({
-    minimize: true
-  }),
-  new HtmlWebpackPlugin({
-    filename: 'index.html',
-    template: 'public/index.html',// 定义的html为模板生成 从根路径开始查找
-    inject: 'body',
-    minify: {// 压缩HTML文件
-      removeComments: true,//去除注释
-      collapseWhitespace: true,//去除空格
-    },
-  }),
-])
+if (process.env.NODE_ENV === "production") {
+  module.exports.devtool = 'none';
+  // http://vue-loader.vuejs.org/en/workflow/production.html
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   sourceMap: true,
+    //   compress: {
+    //     warnings: false,
+    //     drop_console: true
+    //   }
+    // }),
+    // new webpack.LoaderOptionsPlugin({
+    //   minimize: true
+    // })
+
+  ])
+}
 

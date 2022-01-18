@@ -18,7 +18,7 @@ export default class HorizontalScreen extends React.Component {
     this.state = {}
   }
   UNSAFE_componentWillUpdate(nextProps) {
-    if (nextProps.attrs && nextProps.attrs.rotate) {
+    if (nextProps.rotate) {
       directive.unbind(this.myRef.current);
       directive.bind(this.myRef.current, nextProps);
       return true;
@@ -35,7 +35,7 @@ export default class HorizontalScreen extends React.Component {
   render() {
     let { adaptedCallback, attrs, ...params } = this.props;
     return (
-      <ThemeContext.Provider value={attrs && attrs.rotate ? attrs.rotate : 90}>
+      <ThemeContext.Provider value={this.props.rotate}>
         <div ref={this.myRef}  {...params}>{this.props.children}</div>
       </ThemeContext.Provider>
     )
