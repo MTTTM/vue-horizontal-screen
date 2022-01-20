@@ -1,9 +1,10 @@
 import React from 'react';
-import { HorizontalScreen, SwipeWrap, event } from "./src/index.js"
-// import { HorizontalScreen, SwipeWrap, event } from "../../dist/react.horizontalScreen.es"
+// import { HorizontalScreen, SwipeWrap, event } from "./src/index.js"
+import { HorizontalScreen, SwipeWrap, event } from "../../dist/react.horizontalScreen.es"
 // import {HorizontalScreen,SwipeWrap,event} from "react-horizontal-screen"
 // import {HorizontalScreen,SwipeWrap,event} from "react-xx"
-event();
+// event();
+console.log("HorizontalScreen", HorizontalScreen)
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +34,7 @@ export default class App extends React.Component {
   }
   swipeCallBack2(data, el) {
     let { type, dis } = data;
-    console.log("dom event", data, type, dis, el);
+    console.log("dom   event", data, type, dis, el);
 
     if (type == "swipeBottom" && dis >= 5) {
       console.log("swipeBottom");

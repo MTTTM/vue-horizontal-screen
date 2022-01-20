@@ -127,31 +127,33 @@ else if (process.env.NODE_ENV === "production") {
   };
   module.exports.output = {
     filename: '[name].horizontalScreen.es.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
+    library: 'HorizontalScreen',
+    libraryTarget: 'umd'
   }
 }
 
 
 if (process.env.NODE_ENV === "production") {
-  module.exports.devtool = 'none';
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   sourceMap: true,
-    //   compress: {
-    //     warnings: false,
-    //     drop_console: true
-    //   }
-    // }),
-    // new webpack.LoaderOptionsPlugin({
-    //   minimize: true
-    // })
+  // module.exports.devtool = 'none';
+  // // http://vue-loader.vuejs.org/en/workflow/production.html
+  // module.exports.plugins = (module.exports.plugins || []).concat([
+  //   new webpack.DefinePlugin({
+  //     'process.env': {
+  //       NODE_ENV: '"production"'
+  //     }
+  //   }),
+  // new webpack.optimize.UglifyJsPlugin({
+  //   sourceMap: true,
+  //   compress: {
+  //     warnings: false,
+  //     drop_console: true
+  //   }
+  // }),
+  // new webpack.LoaderOptionsPlugin({
+  //   minimize: true
+  // })
 
-  ])
+  // ])
 }
 

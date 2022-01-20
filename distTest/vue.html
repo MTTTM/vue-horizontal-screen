@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cn.vuejs.org/js/vue.js"></script>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="app">
+    <horizontal-screen v-bind="obj" :adapted-callback="adaptedCallback">
+      <div id="wrap">
+        <div class="header">
+          <div class="left">25</div>
+          <div class="mid">
+            <span @click="changeRotate"> CLICKME{{ obj.rotate }}</span>
+          </div>
+          <div class="right">50</div>
+        </div>
+        <div class="main">
+          <swipe-wrap class="dom-event" :swipe-callback="hsSwipe">
+            <p>Horizontal event</p>
+            <h3>swipe type:{{ domSwipe }}</h3>
+          </swipe-wrap>
+          <swipe-wrap class="dom-event2" :swipe-callback="hsSwipe2">
+            <p>Vertical event</p>
+            <h3>swipe type:{{ domSwipe2 }}</h3>
+          </swipe-wrap>
+        </div>
+        <div class="footer"></div>
+      </div>
+    </horizontal-screen>
+  </div>
+  <script src="../dist/vue.horizontalScreen.es.js"></script>
+  <script>
+
+    Vue.component('horizontal-screen', HorizontalScreen.HorizontalScreen);
+    Vue.component('swipe-wrap', HorizontalScreen.SwipeWrap);
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          obj: {
+            width: 2001,
+            height: 1125,
+            cssvar: "hs-var",
+            times: 3,
+            rotate: 90,
+            AdaptEventName: "", //(No longer recommend)Monitor adaptation status events，default is hsAdapt
+          },
+          domSwipe: "--",
+          domSwipe2: "--",
+          show2: true,
+        };
+      },
+      methods: {
+        changeRotate() {
+          this.obj.rotate = this.obj.rotate == 90 ? -90 : 90;
+        },
+        adaptedCallback(e) {
+          clearTimeout(window.timer);
+          window.timer = setTimeout(() => {
+            alert("adaptedCallback");
+            console.log("e", e);
+          }, 1000);
+        },
+        swipeCallback(obj) {
+          if (obj.data.data.type) {
+            alert(obj.data.data.type);
+          } else {
+            alert("hsAdapt");
+          }
+        },
+        reset() {
+          // this.$refs["hscreen"].$hsLayout();
+        },
+        hsSwipe(data, el) {
+          let { type, dis } = data;
+          if (type == "swipeLeft" && dis >= 20) {
+            this.domSwipe = "swipeLeft";
+            console.log("swipeLeft");
+          } else if (type == "swipeRight" && dis >= 20) {
+            console.log("swipeRight");
+            this.domSwipe = "swipeRight";
+          }
+        },
+        hsSwipe2(data, el) {
+          let { type, dis } = data;
+          if (type == "swipeBottom" && dis >= 5) {
+            console.log("swipeBottom");
+            this.domSwipe2 = "swipeBottom";
+          } else if (type == "swipeTop" && dis >= 5) {
+            console.log("swipeTop");
+            this.domSwipe2 = "swipeTop";
+          }
+        },
+      },
+    })
+
+  </script>
+</body>
+
+</html>

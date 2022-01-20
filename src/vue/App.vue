@@ -25,7 +25,11 @@
 
 <script>
 import "../index.scss";
-import { HorizontalScreen, SwipeWrap } from "./src/index.js";
+// import { HorizontalScreen, SwipeWrap } from "./src/index.js";
+import {
+  HorizontalScreen,
+  SwipeWrap,
+} from "../../dist/vue.horizontalScreen.es";
 export default {
   name: "App",
   components: { HorizontalScreen, SwipeWrap },

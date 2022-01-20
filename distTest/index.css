@@ -1,0 +1,84 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  /**disabled browser native event */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: red;
+}
+
+#wrap {
+  width: calc(2001/ 3 * var(--hs-var) * 1px);
+  height: calc(1125/ 3 * var(--hs-var) * 1px);
+}
+
+.header {
+  height: calc(150/ 3 * var(--hs-var) * 1px);
+  background: blue;
+  display: flex;
+  color: red;
+}
+
+.header .left {
+  background: pink;
+  height: calc(75/ 3 * var(--hs-var) * 1px);
+  width: calc(900/ 3 * var(--hs-var) * 1px);
+}
+
+.header .mid {
+  background: yellow;
+  height: calc(120/ 3 * var(--hs-var) * 1px);
+  width: calc(900/ 3 * var(--hs-var) * 1px);
+}
+
+.header .right {
+  background: black;
+  height: calc(150/ 3 * var(--hs-var) * 1px);
+  width: calc(225/ 3 * var(--hs-var) * 1px);
+}
+
+.main {
+  height: calc(825/ 3 * var(--hs-var) * 1px);
+  background: green;
+}
+
+.dom-event {
+  height: calc(300/ 3 * var(--hs-var) * 1px);
+  background: pink;
+}
+
+.dom-event2 {
+  height: calc(525/ 3 * var(--hs-var) * 1px);
+  background: orchid;
+}
+
+.footer {
+  height: calc(150/ 3 * var(--hs-var) * 1px);
+  background: blue;
+}
