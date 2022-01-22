@@ -1,6 +1,6 @@
 {
-  "name": "horizontal-screen-web",
-  "version": "0.0.1",
+  "name": "vue-horizontal-screenxxx",
+  "version": "1.0.0",
   "license": "MIT",
   "private": false,
   "scripts": {
@@ -14,6 +14,7 @@
   "files": [
     "dist"
   ],
+  "main": "./dist/vue.horizontalScreen.es.js",
   "keywords": [
     "horizontal-screen-web",
     "horizontal-screen",
@@ -23,7 +24,7 @@
     "screen"
   ],
   "repository": "https://github.com/MTTTM/vue-horizontal-screen",
-  "description": "horizontal web page layout and swipe events.Using vue or react",
+  "description": "horizontal web page layout and swipe events.",
   "dependencies": {
     "@babel/runtime": "^7.16.7",
     "@babel/runtime-corejs3": "^7.16.8",
