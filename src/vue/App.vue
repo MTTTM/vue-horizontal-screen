@@ -41,7 +41,6 @@ export default {
         cssvar: "hs-var",
         times: 3,
         rotate: 90,
-        AdaptEventName: "", //(No longer recommend)Monitor adaptation status events，default is hsAdapt
       },
       domSwipe: "--",
       domSwipe2: "--",

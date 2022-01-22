@@ -1,54 +1,66 @@
-# vue-horizontal-screen
+# horizontal-screen-web
 
 ## Desc
 
-- It provides horizontal web page layout and events.[online](https://mtttm.github.io/vue-horizontal-screen/#/home)
-- Support computer(Version 0.1.3 or greater)
-- Support V3(Version 0.1.11 or greater)
-- [log](https://github.com/MTTTM/vue-horizontal-screen/blob/main/log.md)
+- suppert vue(2 and 3) and react
+
+- Mobile web page landscape and finger swipe events
+
+## preview
+
+demo1
+
+![image](https://raw.githubusercontent.com/MTTTM/vue-horizontal-screen/main/distTest/qrcode.png)
+
+demo2
+
+![image](https://raw.githubusercontent.com/MTTTM/vue-horizontal-screen/main/distTest/qrcode_1.png)
 
 ## Start
 
 ```
 npm install vue-horizontal-screen
+
 ```
 
-### Directive
+#### vue import
 
-| key             | desc                                                                                                | default  | required |
-| --------------- | --------------------------------------------------------------------------------------------------- | -------- | -------- |
-| width           | Design draft width                                                                                  | --       | TRUE     |
-| height          | Design draft height                                                                                 | --       | TRUE     |
-| rotate          | Rotation angle. 90 and -90 choose one                                                               | 90       | FALSE    |
-| cssVar          | css variable name                                                                                   | --hs-var | FALSE    |
-| times           | Design draft multiple                                                                               | --       | TRUE     |
-| triggerTime     | Time to trigger adaptation after window change(no work on computer side)                            | 1000     | FALSE    |
-| AdaptEventName  | Adaptation status Event <font color='red'> No longer recommend</font>                               | hsAdapt  | FALSE    |
-| adaptedCallback | adapted callback function,string or function,params:(el,bool) <font color='green'> recommend</font> | --       | FALSE    |
-| setWrapAttr     | Set the width and height of the container                                                           | TRUE     | FALSE    |
+```javascript
+import {
+  HorizontalScreen,
+  SwipeWrap,
+} from "vue-horizontal-screen/dist/vue.horizontalScreen.es.js";
+```
 
-### directiveForDom
+#### react import
 
-- Bind events to document nodes
-- Modifier:`.stop` event.stopPropagation()
-- Modifier: `.prevent` event.preventDefault()
-- Modifier:`.clockwise` default true, when Directive params rotate is 90，use it
-- Modifier:`.counterclockwise`,when Directive params rotate is -90,use it.
+```javascript
+import {
+  HorizontalScreen,
+  SwipeWrap,
+} from "vue-horizontal-screen/dist/react.horizontalScreen.es.js";
+```
 
-### params of event
+### HorizontalScreen props
 
-- params {obj}
-- description pre {string} Event name prefix
-- description distance {number} The distance to trigger the event, default 50
-- description rotate {number} 90 or -90，Please stay the same as params rotate of Directive
+| key             | desc                                                          | default  | required |
+| --------------- | ------------------------------------------------------------- | -------- | -------- |
+| width           | Design draft width                                            | --       | TRUE     |
+| height          | Design draft height                                           | --       | TRUE     |
+| rotate          | Rotation angle. 90 and -90 choose one                         | 90       | FALSE    |
+| cssVar          | css variable name                                             | --hs-var | FALSE    |
+| times           | Design draft multiple                                         | --       | TRUE     |
+| triggerTime     | Time to trigger adaptation after window change                | 1000     | FALSE    |
+| adaptedCallback | adapted callback function,string or function,params:(el,bool) | --       | FALSE    |
+| setWrapAttr     | Set the width and height of the container                     | TRUE     | FALSE    |
 
-### window.addEventListener
+### SwipeWrap props
 
-- swipeLeft
-- swipeRight
-- swipeTop
-- swipeBottom
-- hsAdapt <font color='red'> No longer recommend</font>
+| key           | desc                          | default | required |
+| ------------- | ----------------------------- | ------- | -------- |
+| swipeCallback | swipe event callBack function | --      | FALSE    |
+| stop          | event.stopPropagation         | false   | FALSE    |
+| prevent       | event.preventDefault          | false   | FALSE    |
 
 ### css var usage (Just recommended, you can replace it with other layout units)
 
@@ -68,77 +80,71 @@ npm install vue-horizontal-screen
 this.$refs["hscreen"].$hsLayout();
 ```
 
-### Usage demo
-
-### Design draft size （667 _ 3）_（375 \* 3）;
-
-#### main.js
-
-```javascript
-import { directive, event, directiveForDom } from "vue-horizontal-screen";
-Vue.directive("horizontal-screen", { ...directive });
-Vue.directive("hs-swipe", { ...directiveForDom });
-event(); //  addEventListener
-```
+### Usage demo (Design draft size （667 _ 3）_（375 \* 3）)
 
 #### vue template
 
 ```html
 <template>
-  <div id="app" @click="reset">
-    <div v-horizontal-screen="obj" class="box" ref="hscreen">
-      <div id="wrap">
-        <div class="header">
-          <div class="left">25</div>
-          <div class="mid">40</div>
-          <div class="right">50</div>
+  <horizontal-screen v-bind="obj" :adapted-callback="adaptedCallback">
+    <div id="wrap">
+      <div class="header">
+        <div class="left">25</div>
+        <div class="mid">
+          <span @click="changeRotate"> CLICKME{{ obj.rotate }}</span>
         </div>
-        <div class="main">
-          <p>Let's do it!!</p>
-          <div v-hs-swipe.stop="hsSwipe" class="dom-event">Dom Swipe Event</div>
-        </div>
-        <div class="footer"></div>
+        <div class="right">50</div>
       </div>
+      <div class="main">
+        <swipe-wrap class="dom-event" :swipe-callback="hsSwipe">
+          <p>Horizontal event</p>
+          <h3>swipe type:{{ domSwipe }}</h3>
+        </swipe-wrap>
+        <swipe-wrap class="dom-event2" :swipe-callback="hsSwipe2">
+          <p>Vertical event</p>
+          <h3>swipe type:{{ domSwipe2 }}</h3>
+        </swipe-wrap>
+      </div>
+      <div class="footer"></div>
     </div>
-  </div>
+  </horizontal-screen>
 </template>
 ```
 
 #### vue script
 
 ```javascript
+import {
+  HorizontalScreen,
+  SwipeWrap,
+} from "vue-horizontal-screen/dist/vue.horizontalScreen.es.js";
 export default {
   name: "App",
+  components: { HorizontalScreen, SwipeWrap },
   data() {
     return {
       obj: {
         width: 2001,
         height: 1125,
-        cssVar: "hs-var",
+        cssvar: "hs-var",
         times: 3,
-        adaptedCallback: "adaptedCallback" //Replace  window’s event hsAdapt
-      }
+        rotate: 90,
+        AdaptEventName: "", //(No longer recommend)Monitor adaptation status events，default is hsAdapt
+      },
+      domSwipe: "--",
+      domSwipe2: "--",
+      show2: true,
     };
   },
-  mounted() {
-    //window.addEventListener("hsAdapt", this.swipeCallback); //No longer recommend
-    window.addEventListener("swipeLeft", this.swipeCallback);
-    window.addEventListener("swipeRight", this.swipeCallback);
-    window.addEventListener("swipeTop", this.swipeCallback);
-    window.addEventListener("swipeBottom", this.swipeCallback);
-  },
-  beforeDestroy() {
-    /*don't forget to remove eventlistener!!*/
-    // window.removeEventListener("hsAdapt", this.swipeCallback); //No longer recommend
-    window.removeEventListener("swipeLeft", this.swipeCallback);
-    window.removeEventListener("swipeRight", this.swipeCallback);
-    window.removeEventListener("swipeTop", this.swipeCallback);
-    window.removeEventListener("swipeBottom", this.swipeCallback);
-  },
   methods: {
+    changeRotate() {
+      this.obj.rotate = this.obj.rotate == 90 ? -90 : 90;
+    },
     adaptedCallback(e) {
-      alert("adaptedCallback");
-      console.log("e", e);
+      clearTimeout(window.timer);
+      window.timer = setTimeout(() => {
+        alert("adaptedCallback");
+      }, 1000);
     },
     swipeCallback(obj) {
       if (obj.data.data.type) {
@@ -147,25 +153,151 @@ export default {
         alert("hsAdapt");
       }
     },
-    reset() {
-      this.$refs["hscreen"].$hsLayout();
-    },
     hsSwipe(data, el) {
       let { type, dis } = data;
-      console.log("dom event", data, type, dis, el);
       if (type == "swipeLeft" && dis >= 20) {
-        console.log("swipeLeft");
+        this.domSwipe = "swipeLeft";
       } else if (type == "swipeRight" && dis >= 20) {
-        console.log("swipeRight");
+        this.domSwipe = "swipeRight";
       }
-      // if (type == "swipeBottom" && dis >= 5) {
-      //   console.log("swipeBottom");
-      // } else if (type == "swipeTop" && dis >= 5) {
-      //   console.log("swipeTop");
-      // }
+    },
+    hsSwipe2(data, el) {
+      let { type, dis } = data;
+      if (type == "swipeBottom" && dis >= 5) {
+        this.domSwipe2 = "swipeBottom";
+      } else if (type == "swipeTop" && dis >= 5) {
+        this.domSwipe2 = "swipeTop";
+      }
+    },
+  },
+};
+```
+
+#### react demo
+
+```jsx
+import React from "react";
+import {
+  HorizontalScreen,
+  SwipeWrap,
+} from "vue-horizontal-screen/dist/react.horizontalScreen.es.js";
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hsObj: {
+        width: 2001,
+        height: 1125,
+        cssvar: "hs-var",
+        times: 3,
+        rotate: 90,
+      },
+      domSwipeText: "",
+      domSwipeText2: "",
+    };
+    this.myRef = React.createRef();
+  }
+  swipeCallBack(data, el) {
+    let { type, dis } = data;
+    console.log("dom event", data, type, dis, el);
+    if (type === "swipeLeft" && dis >= 20) {
+      this.setState({ domSwipeText: "swipeLeft" });
+      console.log("swipeLeft");
+    } else if (type === "swipeRight" && dis >= 20) {
+      console.log("swipeRight");
+      this.setState({ domSwipeText: "swipeRight" });
     }
   }
-};
+  swipeCallBack2(data, el) {
+    let { type, dis } = data;
+    console.log("dom   event", data, type, dis, el);
+
+    if (type == "swipeBottom" && dis >= 5) {
+      console.log("swipeBottom");
+      this.setState({ domSwipeText2: "swipeBottom" });
+    } else if (type == "swipeTop" && dis >= 5) {
+      this.setState({ domSwipeText2: "swipeTop" });
+    }
+  }
+  swipeCallback(obj) {
+    if (obj.data.data.type) {
+      alert(obj.data.data.type);
+    } else {
+      clearTimeout(window.hsAdaptTimer);
+      window.hsAdaptTimer = setTimeout(() => {
+        alert("hsAdapt");
+      }, 1000);
+    }
+  }
+  adaptedCallback() {
+    clearTimeout(window.hsAdaptTimer);
+    window.hsAdaptTimer = setTimeout(() => {
+      alert("hsAdapt");
+    }, 1000);
+  }
+  changeRoate() {
+    let rotate = this.state.hsObj.rotate == 90 ? -90 : 90;
+    this.setState({
+      hsObj: {
+        width: 2001,
+        height: 1125,
+        cssvar: "hs-var",
+        times: 3,
+        rotate: rotate,
+      },
+    });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <HorizontalScreen
+          {...this.state.hsObj}
+          adaptedCallback={this.adaptedCallback}
+          className="box"
+        >
+          <div id="wrap">
+            <div className="header">
+              <div className="left">25</div>
+              <div className="mid">
+                <span onClick={() => this.changeRoate()}>
+                  CLICK ME!current route {this.state.hsObj.rotate}
+                </span>
+              </div>
+              <div className="right">50</div>
+            </div>
+            <div className="main">
+              <SwipeWrap
+                swipeCallback={(data, el) => this.swipeCallBack(data, el)}
+                stop={true}
+                prevent={true}
+                className="dom-event"
+              >
+                <div className="dom-event">
+                  <p>Horizontal sliding area.</p>
+                  <h3>swipe type:{this.state.domSwipeText}</h3>
+                </div>
+              </SwipeWrap>
+
+              <SwipeWrap
+                swipeCallback={(data, el) => this.swipeCallBack2(data, el)}
+                stop={true}
+                prevent={true}
+                className="dom-event"
+              >
+                <div className="dom-event2">
+                  <p>Vertical sliding area.</p>
+                  <h3>swipe type:{this.state.domSwipeText2}</h3>
+                </div>
+              </SwipeWrap>
+            </div>
+            <div className="footer"></div>
+          </div>
+        </HorizontalScreen>
+      </div>
+    );
+  }
+}
 ```
 
 #### scss

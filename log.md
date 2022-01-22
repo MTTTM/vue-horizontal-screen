@@ -1,3 +1,8 @@
+# V1.0.0
+
+- Merge vue and react into the one library
+- no use vue directives, use components instead
+
 # V0.1.16
 
 - 90 and -90 angles are optional
